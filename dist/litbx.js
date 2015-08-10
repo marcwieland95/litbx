@@ -3,7 +3,7 @@
  * Version: 0.1.0
  * Litbx is a small and easy to use lightbox. It's touch and developer friendly and works just out of the box. It's a lightweight web-plugin based on jQuery.
  * Author: @marcwieland95
- * Site: http://http://www.marcwieland.ch/
+ * Site: http://http://marcwieland.ch/
  * Licensed under the MIT license
  */
 
@@ -63,6 +63,82 @@ var Api = function(Litbx, Core) {
 };
 ;/**
  * --------------------------------
+ * Litbx Arrows
+ * --------------------------------
+ * Arrows navigation module
+ * @return {Litbx.Arrows}
+ */
+
+var Arrows = function(Litbx, Core) {
+
+
+	/**
+	 * Arrows Module Constructor
+	 */
+	function Module() {
+		this.build();
+		this.next();
+	}
+
+	/**
+	 * Build
+	 * arrows DOM
+	 */
+	Module.prototype.build = function() {
+
+		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
+		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+
+		// Create arrow after inner-container
+		Core.Build.$inner.after( Litbx.options.tpl.prev );
+		Core.Build.$inner.after( Litbx.options.tpl.next );
+
+
+		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
+
+	//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
+	//	this.items = this.wrapper.children();
+
+	};
+
+	/**
+	 * Next image
+	 */
+	Module.prototype.next = function() {
+
+		$('.litbx__arrow.next').on('click', function() {
+
+			Core.Run.switch( Litbx.itemIndex );
+
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+
+
+		});
+
+
+	};
+
+
+	/**
+	 * Prev image
+	 */
+	Module.prototype.prev = function() {
+
+
+	};
+
+
+
+
+	// @return Module
+	return new Module();
+
+};
+;/**
+ * --------------------------------
  * Litbx Build
  * --------------------------------
  * Build slider DOM
@@ -79,6 +155,58 @@ var Build = function(Litbx, Core) {
 		this.init();
 	}
 
+
+	/**
+	 * Init lightbox
+	 * @param $element
+	 */
+	Module.prototype.init = function () {
+
+		// Add init class
+		Litbx.element.addClass('init');
+
+		var href,
+		$wrap,
+		$outer;
+
+		href = Litbx.element.attr( 'href' );
+
+		// Create wrapper
+		//$( 'body' ).append( Litbx.options.tpl.wrap );
+		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
+
+		$wrap = $( Litbx.options.tpl.wrap ).appendTo( 'body' );
+		$outer = $( Litbx.options.tpl.outer ).appendTo( $wrap );
+		this.$inner = $( Litbx.options.tpl.inner ).appendTo( $outer );
+		//console.log( $outer );
+
+			/*
+			.append( '<div></div>' )
+				.find('div:last').addClass( Litbx.options.classes.wrapper )
+				//.append( '<div class="outer"></div>' )
+				.append( '<div></div>' )
+					.find('div:last').addClass( Litbx.options.classes.inner );
+			*/
+
+		// Insert image
+		$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
+
+	};
+
+
+	/**
+	 * Destroy lightbox
+	 * @param
+	 */
+	Module.prototype.destroy = function () {
+
+		// Remove wrapper
+		$( '.' + Litbx.options.classes.wrapper).remove();
+
+		// Remove init class
+		Litbx.element.removeClass('init');
+
+	};
 
 
 
@@ -99,7 +227,7 @@ var Core = function (Litbx, Modules) {
 
 	/**
 	 * Core Module Constructor
-	 * Construct modules and inject Glide and Core as dependency
+	 * Construct modules and inject Litbx and Core as dependency
 	 */
 	function Module() {
 
@@ -108,6 +236,51 @@ var Core = function (Litbx, Modules) {
 		}
 
 	}
+
+	// @return Module
+	return new Module();
+
+};
+;/**
+ * --------------------------------
+ * Litbx Events
+ * --------------------------------
+ * Events functions
+ * @return {Litbx.Events}
+ */
+
+var Events = function(Litbx, Core) {
+
+
+	/**
+	 * Events Module Constructor
+	 */
+	function Module() {
+		this.close();
+	}
+
+
+	/**
+	 * Click events - close lightbox
+	 */
+	Module.prototype.close = function() {
+
+		// Handle click in wrapper (around image)
+		$('.litbx__wrapper').on( 'click' , function() {
+			Core.Build.destroy();
+		})
+
+		// Handle click in image
+		.children().on( 'click', function() {
+			if ( !Litbx.options.closeClick ) {
+				return false;
+			}
+		});
+
+	};
+
+
+
 
 	// @return Module
 	return new Module();
@@ -139,6 +312,50 @@ var Helper = function(Litbx, Core) {
 };
 ;/**
  * --------------------------------
+ * Litbx Run
+ * --------------------------------
+ * Run logic module
+ * @return {Module}
+ */
+
+var Run = function(Litbx, Core) {
+
+
+	/**
+	 * Run Module
+	 * Constructor
+	 */
+	function Module() {
+
+	}
+
+	/**
+	 * Switch image
+	 * @param index
+	 */
+	Module.prototype.switch = function ( index ) {
+
+		var preloadMedia,
+		preloadMediaURL;
+
+		// nextImage
+		preloadMedia = Litbx.gallery.eq( index + 1 );
+		preloadMediaURL = preloadMedia.attr( 'href' );
+
+		// prepare content to replace
+		var item = '<img src="' + preloadMediaURL + '" alt="">';
+
+		// replace inner content
+		Core.Build.$inner.find('img').replaceWith( item );
+
+	};
+
+
+	return new Module();
+
+};
+;/**
+ * --------------------------------
  * Litbx Touch
  * --------------------------------
  * Touch module
@@ -147,6 +364,10 @@ var Helper = function(Litbx, Core) {
 
 var Touch = function(Litbx, Core) {
 
+	/**
+	 * Helper Module Constructor
+	 */
+	function Module() {}
 
 
 	// @return Module
@@ -171,15 +392,66 @@ var Litbx = function (element, options) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		beforeInit: function(slider) {},
-		afterInit: function(i, el) {},
+		padding: 15,  // not in use
+		margin: [30, 55, 30, 55],  // not in use
+		arrows: true,  // not in use
+		closeBtn  : true,  // not in use
+
+		// Dimensions
+		width: 800,  // not in use
+		height: 450,  // not in use
+		minWidth: 100,  // not in use
+		minHeight: 100,  // not in use
+		maxWidth: 99999,  // not in use
+		maxHeight: 99999,  // not in use
+		aspectRatio: false,  // not in use
+		fitToView: true,  // not in use
+
+		// Click
+		closeClick: false,
+
+		// Classes
+		classes: {
+			base: 'litbx', // not in use
+			wrapper: 'litbx__wrapper',
+			inner: 'litbx__inner',
+			item: 'litbx__item',
+			loading: 'litbx__loading',
+			arrow: 'litbx__arrow',
+			arrowNext: 'next',
+			arrowPrev: 'prev',
+			current: 'current'
+		},
+
+		// Templates - can't use classes dynamicly here and there is also redundancy
+		tpl: {
+			wrap: '<div class="litbx__wrapper"></div>',
+			outer: '<div class="litbx__outer"></div>',
+			inner: '<div class="litbx__inner"></div>',
+			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
+			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
+			next: '<span class="litbx__arrow prev"><i class="prev">Zurück</i></span>',
+			prev: '<span class="litbx__arrow next"><i class="next">Weiter</i></span>'
+		},
+
+		// Callbacks
+		beforeInit: function() {},
+		afterInit: function() {},
 	};
 
 	// Extend options
 	this.options = $.extend({}, defaults, options);
 
+	// Triggered element
+	this.element = element;
+
+	// Collect DOM
+	this.collect();
+	// Init values
+	this.setup();
+
 	// Call before init callback
-	this.options.beforeInit(this.slider);
+	this.options.beforeInit();
 
 	/**
 	 * Construct Core with modules
@@ -187,31 +459,65 @@ var Litbx = function (element, options) {
 	 */
 	var Engine = new Core(this, {
 		Helper: Helper,
+		Run: Run,
 		Animation: Animation,
 		Build: Build,
+		Arrows: Arrows,
+		Events: Events,
 		Touch: Touch,
 		Api: Api
 	});
 
 	// Call after init callback
-	this.options.afterInit(this.current, this.slides.eq(this.current - 1));
+	this.options.afterInit();
 
 	// api return
 	return Engine.Api.instance();
 
+};
+
+/**
+ * Collect DOM
+ * and set classes
+ */
+Litbx.prototype.collect = function() {
+
+	//this.slider =
+	//this.sliderTrigger = this.element.addClass('init');
+	this.current = this.element;
+	this.galleryRel = this.element.attr('rel');
+	this.gallery = $('[rel="' + this.galleryRel + '"]');
+
+};
+
+/**
+ * Setup properties and values
+ */
+Litbx.prototype.setup = function() {
+
+	this.length = this.gallery.length;
+	this.itemIndex = this.gallery.index( this.element );
+
 };;/**
- * Wire Glide to jQuery
+ * Wire Litbx to jQuery
  * @param  {object} options Plugin options
  * @return {object}
  */
 
-$.fn.glide = function (options) {
+$.fn.litbx = function (options) {
 
 	return this.each(function () {
-		if ( !$.data(this, 'glide_api') ) {
-			$.data(this, 'glide_api',
-				new Glide($(this), options)
-			);
+		if ( !$.data(this, 'litbx_api') ) {
+
+			// Trigger plugin on click and prevent default link
+			$(this).on('click', function(event) {
+				event.preventDefault();
+				$.data(this, 'litbx_api',
+					// Init plugin instance
+					new Litbx($(this), options)
+				);
+			});
+
 		}
 	});
 

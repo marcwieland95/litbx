@@ -2,6 +2,8 @@
 
 [Litbx](http://litbx.marcwieland.ch) is a small and easy to use lightbox. It's touch and developer friendly and works just out of the box. It's a lightweight web-plugin based on jQuery.
 
+[![Build Status](https://travis-ci.org/marcwieland95/litbx.svg)](https://travis-ci.org/marcwieland95/litbx)
+
 ##Documentation
 In progress
 

@@ -141,10 +141,7 @@ module.exports = function(grunt){
 				tasks: ['style']
 			},
 			js: {
-				files: [
-					'<%= paths.src %>/**/*.js',
-					'<%= paths.tests %>/**/*.js'
-				],
+				files: ['<%= paths.src %>/**/*.js'],
 				tasks: ['script']
 			}
 		}

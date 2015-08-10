@@ -11,7 +11,7 @@ var Core = function (Litbx, Modules) {
 
 	/**
 	 * Core Module Constructor
-	 * Construct modules and inject Glide and Core as dependency
+	 * Construct modules and inject Litbx and Core as dependency
 	 */
 	function Module() {
 
