@@ -1,0 +1,24 @@
+{
+  "name": "Litbx",
+  "version": "0.1.0",
+  "description": "Litbx is a small and easy to use lightbox. It's touch and developer friendly and works just out of the box. It's a lightweight web-plugin based on jQuery.",
+  "main": "Gruntfile.js",
+  "author": "@marcwieland95",
+  "homepage": "http://marcwieland.ch",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marcwieland95/litbx.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-autoprefixer": "*",
+    "grunt-contrib-less": "*",
+    "grunt-less-to-sass": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*",
+    "matchdep": "*"
+  }
+}

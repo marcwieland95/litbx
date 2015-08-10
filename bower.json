@@ -1,0 +1,34 @@
+{
+	"name": "litbx",
+	"version": "0.1.0",
+	"homepage": "http://marcwieland.ch",
+	"authors": [
+		"Marc Wieland <marc@marcwieland.ch>"
+	],
+	"description": "Litbx is a small and easy to use lightbox. It's touch and developer friendly and works just out of the box. It's a lightweight web-plugin based on jQuery.",
+	"main": [
+		"dist/litbx.min.js",
+		"dist/css/litbx.css"
+	],
+	"moduleType": [
+		"node"
+	],
+	"keywords": [
+		"lightbox",
+		"touch",
+		"lightweight"
+	],
+	"license": "MIT",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests",
+		"@examples",
+		".sass-cache"
+	],
+	"devDependencies": {
+		"jquery": "*"
+	}
+}
