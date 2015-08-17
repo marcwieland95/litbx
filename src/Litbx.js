@@ -4,12 +4,13 @@
  * --------------------------------
  * Responsible for lightbox init,
  * extending defaults, returning public api
- * @param {jQuery} element Root element
+ * @param {jQuery} elements All image elements
  * @param {Object} options Plugin init options
+ * @param {jQuery} trigger Root element
  * @return {Litbx}
  */
 
-var Litbx = function (element, options) {
+var Litbx = function ( elements, options, trigger ) {
 
 	/**
 	 * Default options
@@ -19,7 +20,8 @@ var Litbx = function (element, options) {
 		padding: 15,  // not in use
 		margin: [30, 55, 30, 55],  // not in use
 		arrows: true,  // not in use
-		closeBtn  : true,  // not in use
+		closeBtn: true,  // not in use
+		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 
 		// Dimensions
 		width: 800,  // not in use
@@ -34,23 +36,30 @@ var Litbx = function (element, options) {
 		// Click
 		closeClick: false,
 
+		// Keyboard
+		keyboard: true,
+		// nextKeyCode
+		// prevKeyCode
+		// closeKeyCode
+
 		// Classes
 		classes: {
-			base: 'litbx', // not in use
+			//base: 'litbx', // not in use
+			overlay: 'litbx__overlay',
 			wrapper: 'litbx__wrapper',
 			inner: 'litbx__inner',
 			item: 'litbx__item',
-			loading: 'litbx__loading',
 			arrow: 'litbx__arrow',
 			arrowNext: 'next',
 			arrowPrev: 'prev',
-			current: 'current'
+			current: 'current',
+			loading: 'loading',
 		},
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
+			overlay: '<div class="litbx__overlay"></div>',
 			wrap: '<div class="litbx__wrapper"></div>',
-			outer: '<div class="litbx__outer"></div>',
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
@@ -66,11 +75,17 @@ var Litbx = function (element, options) {
 	// Extend options
 	this.options = $.extend({}, defaults, options);
 
-	// Triggered element
-	this.element = element;
+	// Elements
+	this.elements = elements;
+	this.trigger = trigger;
+	this.element = trigger; // deprecated
+
+	// Setup gallery group
+	this.group();
 
 	// Collect DOM
 	this.collect();
+
 	// Init values
 	this.setup();
 
@@ -100,26 +115,62 @@ var Litbx = function (element, options) {
 
 };
 
+
+/**
+ * Setup gallery groups (attr)
+ */
+Litbx.prototype.group = function() {
+
+	// check if has galleries (groups)
+	this.groupAttr = this.trigger.attr('data-group');
+
+	//this.galleryGroup = this.current.attr('data-group') || this.current.attr('rel'); // with rel-attr fallback - handle inside if-statement
+
+	if ( this.groupAttr !== undefined ) {
+
+		// cache group selection
+		this.group = $( '[data-group="' + this.groupAttr + '"]' );
+
+		// Filter elements with group-attribute
+		this.elements = this.elements.filter( this.group );
+
+		//this.trigger = this.trigger.filter( this.group );
+		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
+
+	}
+
+};
+
+
 /**
  * Collect DOM
  * and set classes
  */
 Litbx.prototype.collect = function() {
 
-	//this.slider =
-	//this.sliderTrigger = this.element.addClass('init');
-	this.current = this.element;
-	this.galleryRel = this.element.attr('rel');
-	this.gallery = $('[rel="' + this.galleryRel + '"]');
+	// Set current
+	if (this.options.startAt) { // falsy value -> 0 or false
+		this.currentIndex = parseInt( this.options.startAt - 1 );
+	} else {
+		// false: start on trigger image
+		//this.currentIndex = this.trigger.index();
+		this.currentIndex = this.trigger.index( '[data-group="' + this.groupAttr + '"]' ); // get index relative to group
+	}
+	this.current = this.currentIndex;
+	//console.log(this.current);
+
+	//this.$current = this.elements.eq( this.current );
 
 };
+
 
 /**
  * Setup properties and values
  */
 Litbx.prototype.setup = function() {
 
-	this.length = this.gallery.length;
-	this.itemIndex = this.gallery.index( this.element );
+	// Group length
+	this.length = this.group.length; // deprecated
+	this.groupLength = this.group.length;
 
 };

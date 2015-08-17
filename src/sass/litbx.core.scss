@@ -2,7 +2,7 @@
 
 	$that: .litbx !default;
 
-	&__wrapper {
+	&__overlay {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -14,7 +14,7 @@
 		align-items: center;
 	}
 
-	&__outer {
+	&__wrapper {
 		position: relative;
 		height: 90%;
 		width: 40%;
@@ -35,6 +35,9 @@
 		width: auto;
 	}
 
+	/*
+		Arrow
+	 */
 	&__arrow {
 		position: absolute;
 		cursor: pointer;
@@ -57,6 +60,38 @@
 		&.next { right: 0; }
 
 
+	}
+
+	/*
+		Loading
+	 */
+	&.loading::after {
+		content: "";
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		z-index: 101;
+		width: 40px;
+		height: 40px;
+		background-color: yellow;
+
+		animation: sk-rotateplane 1.2s infinite ease-in-out;
+	}
+
+	@-webkit-keyframes sk-rotateplane {
+		0% { -webkit-transform: perspective(120px) }
+		50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+		100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+	}
+
+	@keyframes sk-rotateplane {
+		0% {
+			transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+		} 50% {
+			transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+		} 100% {
+			transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+		}
 	}
 
 }

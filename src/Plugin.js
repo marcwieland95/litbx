@@ -4,21 +4,21 @@
  * @return {object}
  */
 
-$.fn.litbx = function (options) {
+$.fn.litbx = function ( options ) {
 
-	return this.each(function () {
-		if ( !$.data(this, 'litbx_api') ) {
-
+	// todo: don't allow mulitple trigger on same element
+	// return this.each( function () {
+		if ( !$.data( this, 'litbx_api' ) ) {
+			var $trigger = this;
 			// Trigger plugin on click and prevent default link
-			$(this).on('click', function(event) {
+			$( this ).on( 'click', function( event ) {
 				event.preventDefault();
-				$.data(this, 'litbx_api',
+				$.data( this, 'litbx_api',
 					// Init plugin instance
-					new Litbx($(this), options)
+					new Litbx( $trigger, options, $(this) )
 				);
 			});
-
 		}
-	});
+	// });
 
 };

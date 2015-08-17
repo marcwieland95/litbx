@@ -78,6 +78,7 @@ var Arrows = function(Litbx, Core) {
 	function Module() {
 		this.build();
 		this.next();
+		this.prev();
 	}
 
 	/**
@@ -106,19 +107,16 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.next = function() {
 
-		$('.litbx__arrow.next').on('click', function() {
+		$('.litbx__arrow.next').on('click.litbx', function() {
 
-			Core.Run.switch( Litbx.itemIndex );
+			Core.Run.switch( '>' );
+			//Core.Run.switch( '>', Litbx.current.index() );
 
 			//console.log ( Litbx.gallery.get( 8 ) );
 
 			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
 
-
-
 		});
-
-
 	};
 
 
@@ -127,10 +125,18 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.prev = function() {
 
+		$('.litbx__arrow.prev').on('click.litbx', function() {
+
+			Core.Run.switch( '<' );
+			//Core.Run.switch( '<', Litbx.current.index() );
+
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+		});
 
 	};
-
-
 
 
 	// @return Module
@@ -158,26 +164,36 @@ var Build = function(Litbx, Core) {
 
 	/**
 	 * Init lightbox
-	 * @param $element
+	 * @param
 	 */
 	Module.prototype.init = function () {
 
-		// Add init class
-		Litbx.element.addClass('init');
-
 		var href,
-		$wrap,
-		$outer;
+		$overlay,
+		$wrap;
 
-		href = Litbx.element.attr( 'href' );
+		$current = Litbx.elements.eq( Litbx.current );
+
+		//console.log( Litbx.element.attr( 'class' ) );
+		//console.log( Litbx.element );
+
+		//console.log( $(Litbx.current).index() );
+
+		// Add current class
+		$current.addClass( Litbx.options.classes.current );
+
+		//console.log(Litbx.elements);
+		//console.log(Litbx.current);
+
+		href = $current.attr( 'href' );
 
 		// Create wrapper
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
 		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
 
-		$wrap = $( Litbx.options.tpl.wrap ).appendTo( 'body' );
-		$outer = $( Litbx.options.tpl.outer ).appendTo( $wrap );
-		this.$inner = $( Litbx.options.tpl.inner ).appendTo( $outer );
+		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
+		$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
+		this.$inner = $( Litbx.options.tpl.inner ).appendTo( $wrap );
 		//console.log( $outer );
 
 			/*
@@ -191,6 +207,14 @@ var Build = function(Litbx, Core) {
 		// Insert image
 		$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
 
+		// Show loading
+		$( '.' + Litbx.options.classes.item ).load(function() {
+			$current.removeClass( 'loading' );
+		}).each(function() {
+			//if(this.complete) $(this).load();
+			$current.addClass( 'loading' );
+		});
+
 	};
 
 
@@ -201,14 +225,13 @@ var Build = function(Litbx, Core) {
 	Module.prototype.destroy = function () {
 
 		// Remove wrapper
-		$( '.' + Litbx.options.classes.wrapper).remove();
+		$( '.' + Litbx.options.classes.overlay ).remove();
 
 		// Remove init class
-		Litbx.element.removeClass('init');
+		Core.Run.current().removeClass( Litbx.options.classes.current );
+		//Litbx.current.siblings().removeClass( Litbx.options.classes.current ); // wrong selector, get right current item
 
 	};
-
-
 
 	// @return Module
 	return new Module();
@@ -256,8 +279,23 @@ var Events = function(Litbx, Core) {
 	 * Events Module Constructor
 	 */
 	function Module() {
+		this.keyboard();
 		this.close();
 	}
+
+
+	/**
+	 * Keyboard events
+	 */
+	Module.prototype.keyboard = function() {
+		if (Litbx.options.keyboard) {
+			$(window).on('keyup.litbx', function(event){
+				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
+				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
+				if (event.keyCode === 32) Core.Build.destroy(); // close
+			});
+		}
+	};
 
 
 	/**
@@ -266,12 +304,12 @@ var Events = function(Litbx, Core) {
 	Module.prototype.close = function() {
 
 		// Handle click in wrapper (around image)
-		$('.litbx__wrapper').on( 'click' , function() {
+		$('.' + Litbx.options.classes.overlay ).on( 'click.litbx' , function() {
 			Core.Build.destroy();
 		})
 
 		// Handle click in image
-		.children().on( 'click', function() {
+		.children().on( 'click.litbx', function() {
 			if ( !Litbx.options.closeClick ) {
 				return false;
 			}
@@ -330,16 +368,91 @@ var Run = function(Litbx, Core) {
 	}
 
 	/**
+	 * Check if we are on first slide
+	 * @return {boolean}
+	 */
+	Module.prototype.isStart = function() {
+		return Litbx.current === 0;
+	};
+
+
+	/**
+	 * Check if we are on last slide
+	 * @return {boolean}
+	 */
+	Module.prototype.isEnd = function() {
+		return Litbx.current === Litbx.groupLength - 1;
+	};
+
+
+	/**
+	 * jQuery object of current item
+	 * @return {jquery object}
+	 */
+	Module.prototype.current = function() {
+		return Litbx.elements.eq( Litbx.current );
+	};
+
+
+	/**
 	 * Switch image
 	 * @param index
+	 * @param direction
 	 */
-	Module.prototype.switch = function ( index ) {
+	Module.prototype.switch = function ( direction, index ) {
 
 		var preloadMedia,
-		preloadMediaURL;
+		preloadMediaURL,
+		position;
+
+		// set current index, when not set
+		if ( index === undefined ) {
+			//index = Litbx.current.index();
+			//index = Litbx.current.index( '[data-group="' + Litbx.groupAttr + '"]' );
+			index = Litbx.current;
+		}
+
+		// add active class
+		//Litbx.group
+		Litbx.elements
+			.eq( index ).removeClass( Litbx.options.classes.current );
+
+		// set current position according to direction
+		switch(direction) {
+
+			case '>':
+				if ( this.isEnd() ) {
+					Litbx.current = 0;
+				} else {
+					Litbx.current = index + 1;
+				}
+				break;
+
+			case '<':
+				if ( this.isStart() ) {
+					Litbx.current = Litbx.groupLength - 1;
+				} else {
+					Litbx.current = index - 1;
+				}
+				break;
+
+			case '=':
+				Litbx.current = index;
+				break;
+		}
+
+	/*
+		if ( direction === '>' ) {
+			Litbx.current = Litbx.elements.eq( index + 1 );
+		} else if ( direction === '<' ) {
+			Litbx.current = Litbx.elements.eq( index - 1 );
+		}
+	*/
 
 		// nextImage
-		preloadMedia = Litbx.gallery.eq( index + 1 );
+		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
+		//preloadMedia = this.$current().addClass( Litbx.options.classes.current );
+		preloadMedia = this.current().addClass( Litbx.options.classes.current );
 		preloadMediaURL = preloadMedia.attr( 'href' );
 
 		// prepare content to replace
@@ -380,12 +493,13 @@ var Touch = function(Litbx, Core) {
  * --------------------------------
  * Responsible for lightbox init,
  * extending defaults, returning public api
- * @param {jQuery} element Root element
+ * @param {jQuery} elements All image elements
  * @param {Object} options Plugin init options
+ * @param {jQuery} trigger Root element
  * @return {Litbx}
  */
 
-var Litbx = function (element, options) {
+var Litbx = function ( elements, options, trigger ) {
 
 	/**
 	 * Default options
@@ -395,7 +509,8 @@ var Litbx = function (element, options) {
 		padding: 15,  // not in use
 		margin: [30, 55, 30, 55],  // not in use
 		arrows: true,  // not in use
-		closeBtn  : true,  // not in use
+		closeBtn: true,  // not in use
+		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 
 		// Dimensions
 		width: 800,  // not in use
@@ -410,23 +525,30 @@ var Litbx = function (element, options) {
 		// Click
 		closeClick: false,
 
+		// Keyboard
+		keyboard: true,
+		// nextKeyCode
+		// prevKeyCode
+		// closeKeyCode
+
 		// Classes
 		classes: {
-			base: 'litbx', // not in use
+			//base: 'litbx', // not in use
+			overlay: 'litbx__overlay',
 			wrapper: 'litbx__wrapper',
 			inner: 'litbx__inner',
 			item: 'litbx__item',
-			loading: 'litbx__loading',
 			arrow: 'litbx__arrow',
 			arrowNext: 'next',
 			arrowPrev: 'prev',
-			current: 'current'
+			current: 'current',
+			loading: 'loading',
 		},
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
+			overlay: '<div class="litbx__overlay"></div>',
 			wrap: '<div class="litbx__wrapper"></div>',
-			outer: '<div class="litbx__outer"></div>',
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
@@ -442,11 +564,17 @@ var Litbx = function (element, options) {
 	// Extend options
 	this.options = $.extend({}, defaults, options);
 
-	// Triggered element
-	this.element = element;
+	// Elements
+	this.elements = elements;
+	this.trigger = trigger;
+	this.element = trigger; // deprecated
+
+	// Setup gallery group
+	this.group();
 
 	// Collect DOM
 	this.collect();
+
 	// Init values
 	this.setup();
 
@@ -476,27 +604,63 @@ var Litbx = function (element, options) {
 
 };
 
+
+/**
+ * Setup gallery groups (attr)
+ */
+Litbx.prototype.group = function() {
+
+	// check if has galleries (groups)
+	this.groupAttr = this.trigger.attr('data-group');
+
+	//this.galleryGroup = this.current.attr('data-group') || this.current.attr('rel'); // with rel-attr fallback - handle inside if-statement
+
+	if ( this.groupAttr !== undefined ) {
+
+		// cache group selection
+		this.group = $( '[data-group="' + this.groupAttr + '"]' );
+
+		// Filter elements with group-attribute
+		this.elements = this.elements.filter( this.group );
+
+		//this.trigger = this.trigger.filter( this.group );
+		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
+
+	}
+
+};
+
+
 /**
  * Collect DOM
  * and set classes
  */
 Litbx.prototype.collect = function() {
 
-	//this.slider =
-	//this.sliderTrigger = this.element.addClass('init');
-	this.current = this.element;
-	this.galleryRel = this.element.attr('rel');
-	this.gallery = $('[rel="' + this.galleryRel + '"]');
+	// Set current
+	if (this.options.startAt) { // falsy value -> 0 or false
+		this.currentIndex = parseInt( this.options.startAt - 1 );
+	} else {
+		// false: start on trigger image
+		//this.currentIndex = this.trigger.index();
+		this.currentIndex = this.trigger.index( '[data-group="' + this.groupAttr + '"]' ); // get index relative to group
+	}
+	this.current = this.currentIndex;
+	//console.log(this.current);
+
+	//this.$current = this.elements.eq( this.current );
 
 };
+
 
 /**
  * Setup properties and values
  */
 Litbx.prototype.setup = function() {
 
-	this.length = this.gallery.length;
-	this.itemIndex = this.gallery.index( this.element );
+	// Group length
+	this.length = this.group.length; // deprecated
+	this.groupLength = this.group.length;
 
 };;/**
  * Wire Litbx to jQuery
@@ -504,22 +668,22 @@ Litbx.prototype.setup = function() {
  * @return {object}
  */
 
-$.fn.litbx = function (options) {
+$.fn.litbx = function ( options ) {
 
-	return this.each(function () {
-		if ( !$.data(this, 'litbx_api') ) {
-
+	// todo: don't allow mulitple trigger on same element
+	// return this.each( function () {
+		if ( !$.data( this, 'litbx_api' ) ) {
+			var $trigger = this;
 			// Trigger plugin on click and prevent default link
-			$(this).on('click', function(event) {
+			$( this ).on( 'click', function( event ) {
 				event.preventDefault();
-				$.data(this, 'litbx_api',
+				$.data( this, 'litbx_api',
 					// Init plugin instance
-					new Litbx($(this), options)
+					new Litbx( $trigger, options, $(this) )
 				);
 			});
-
 		}
-	});
+	// });
 
 };
 

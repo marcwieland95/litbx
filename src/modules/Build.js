@@ -19,26 +19,36 @@ var Build = function(Litbx, Core) {
 
 	/**
 	 * Init lightbox
-	 * @param $element
+	 * @param
 	 */
 	Module.prototype.init = function () {
 
-		// Add init class
-		Litbx.element.addClass('init');
-
 		var href,
-		$wrap,
-		$outer;
+		$overlay,
+		$wrap;
 
-		href = Litbx.element.attr( 'href' );
+		$current = Litbx.elements.eq( Litbx.current );
+
+		//console.log( Litbx.element.attr( 'class' ) );
+		//console.log( Litbx.element );
+
+		//console.log( $(Litbx.current).index() );
+
+		// Add current class
+		$current.addClass( Litbx.options.classes.current );
+
+		//console.log(Litbx.elements);
+		//console.log(Litbx.current);
+
+		href = $current.attr( 'href' );
 
 		// Create wrapper
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
 		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
 
-		$wrap = $( Litbx.options.tpl.wrap ).appendTo( 'body' );
-		$outer = $( Litbx.options.tpl.outer ).appendTo( $wrap );
-		this.$inner = $( Litbx.options.tpl.inner ).appendTo( $outer );
+		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
+		$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
+		this.$inner = $( Litbx.options.tpl.inner ).appendTo( $wrap );
 		//console.log( $outer );
 
 			/*
@@ -52,6 +62,14 @@ var Build = function(Litbx, Core) {
 		// Insert image
 		$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
 
+		// Show loading
+		$( '.' + Litbx.options.classes.item ).load(function() {
+			$current.removeClass( 'loading' );
+		}).each(function() {
+			//if(this.complete) $(this).load();
+			$current.addClass( 'loading' );
+		});
+
 	};
 
 
@@ -62,14 +80,13 @@ var Build = function(Litbx, Core) {
 	Module.prototype.destroy = function () {
 
 		// Remove wrapper
-		$( '.' + Litbx.options.classes.wrapper).remove();
+		$( '.' + Litbx.options.classes.overlay ).remove();
 
 		// Remove init class
-		Litbx.element.removeClass('init');
+		Core.Run.current().removeClass( Litbx.options.classes.current );
+		//Litbx.current.siblings().removeClass( Litbx.options.classes.current ); // wrong selector, get right current item
 
 	};
-
-
 
 	// @return Module
 	return new Module();

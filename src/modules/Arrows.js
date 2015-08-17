@@ -15,6 +15,7 @@ var Arrows = function(Litbx, Core) {
 	function Module() {
 		this.build();
 		this.next();
+		this.prev();
 	}
 
 	/**
@@ -43,19 +44,16 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.next = function() {
 
-		$('.litbx__arrow.next').on('click', function() {
+		$('.litbx__arrow.next').on('click.litbx', function() {
 
-			Core.Run.switch( Litbx.itemIndex );
+			Core.Run.switch( '>' );
+			//Core.Run.switch( '>', Litbx.current.index() );
 
 			//console.log ( Litbx.gallery.get( 8 ) );
 
 			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
 
-
-
 		});
-
-
 	};
 
 
@@ -64,10 +62,18 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.prev = function() {
 
+		$('.litbx__arrow.prev').on('click.litbx', function() {
+
+			Core.Run.switch( '<' );
+			//Core.Run.switch( '<', Litbx.current.index() );
+
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+		});
 
 	};
-
-
 
 
 	// @return Module
