@@ -15,6 +15,25 @@ var Helper = function(Litbx, Core) {
 	function Module() {}
 
 
+	/**
+	 * jQuery object of current item
+	 * @param shift
+	 * @return {jquery object}
+	 */
+	Module.prototype.current = function( shift ) {
+
+		switch(shift) {
+			case '++':
+				return Litbx.elements.eq( Litbx.current + 1 );
+
+			case '--':
+				return Litbx.elements.eq( Litbx.current - 1 );
+
+			default:
+				return Litbx.elements.eq( Litbx.current );
+		}
+
+	};
 
 
 	// @return Module

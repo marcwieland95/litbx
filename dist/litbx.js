@@ -77,8 +77,7 @@ var Arrows = function(Litbx, Core) {
 	 */
 	function Module() {
 		this.build();
-		this.next();
-		this.prev();
+		this.collect();
 	}
 
 	/**
@@ -94,7 +93,6 @@ var Arrows = function(Litbx, Core) {
 		Core.Build.$inner.after( Litbx.options.tpl.prev );
 		Core.Build.$inner.after( Litbx.options.tpl.next );
 
-
 		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
 
 	//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
@@ -102,41 +100,17 @@ var Arrows = function(Litbx, Core) {
 
 	};
 
-	/**
-	 * Next image
-	 */
-	Module.prototype.next = function() {
-
-		$('.litbx__arrow.next').on('click.litbx', function() {
-
-			Core.Run.switch( '>' );
-			//Core.Run.switch( '>', Litbx.current.index() );
-
-			//console.log ( Litbx.gallery.get( 8 ) );
-
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
-
-		});
-	};
-
 
 	/**
-	 * Prev image
+	 * Collect arrow item
+	 * arrows DOM
 	 */
-	Module.prototype.prev = function() {
+	Module.prototype.collect = function() {
 
-		$('.litbx__arrow.prev').on('click.litbx', function() {
-
-			Core.Run.switch( '<' );
-			//Core.Run.switch( '<', Litbx.current.index() );
-
-			//console.log ( Litbx.gallery.get( 8 ) );
-
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
-
-		});
+		this.arrows = $( '.' + Litbx.options.classes.overlay ).find( '.' + Litbx.options.classes.arrow );
 
 	};
+
 
 
 	// @return Module
@@ -172,20 +146,18 @@ var Build = function(Litbx, Core) {
 		$overlay,
 		$wrap;
 
-		$current = Litbx.elements.eq( Litbx.current );
-
 		//console.log( Litbx.element.attr( 'class' ) );
 		//console.log( Litbx.element );
 
 		//console.log( $(Litbx.current).index() );
 
 		// Add current class
-		$current.addClass( Litbx.options.classes.current );
+		Core.Helper.current().addClass( Litbx.options.classes.current );
 
 		//console.log(Litbx.elements);
 		//console.log(Litbx.current);
 
-		href = $current.attr( 'href' );
+		href = Core.Helper.current().attr( 'href' );
 
 		// Create wrapper
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
@@ -207,13 +179,10 @@ var Build = function(Litbx, Core) {
 		// Insert image
 		$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
 
-		// Show loading
-		$( '.' + Litbx.options.classes.item ).load(function() {
-			$current.removeClass( 'loading' );
-		}).each(function() {
-			//if(this.complete) $(this).load();
-			$current.addClass( 'loading' );
-		});
+		Core.Images.load();
+
+		// preload next/prev image
+		Core.Images.preload();
 
 	};
 
@@ -227,9 +196,10 @@ var Build = function(Litbx, Core) {
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
 
-		// Remove init class
-		Core.Run.current().removeClass( Litbx.options.classes.current );
-		//Litbx.current.siblings().removeClass( Litbx.options.classes.current ); // wrong selector, get right current item
+		// Remove classes
+		Core.Helper.current()
+			.removeClass( Litbx.options.classes.loading )
+			.removeClass( Litbx.options.classes.current );
 
 	};
 
@@ -280,6 +250,8 @@ var Events = function(Litbx, Core) {
 	 */
 	function Module() {
 		this.keyboard();
+		this.next();
+		this.prev();
 		this.close();
 	}
 
@@ -299,6 +271,56 @@ var Events = function(Litbx, Core) {
 
 
 	/**
+	 * Next image
+	 */
+	Module.prototype.next = function() {
+
+		$( '.' + Litbx.options.classes.arrowNext ).on( 'click.litbx', function() {
+
+			Core.Run.switch( '>' );
+
+			/*
+			if ( Core.Run.isEnd() ) {
+				Core.Events.unbindArrow();
+			}
+			*/
+
+			//Core.Run.switch( '>', Litbx.current.index() );
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+		});
+	};
+
+
+	/**
+	 * Prev image
+	 */
+	Module.prototype.prev = function() {
+
+		$( '.' + Litbx.options.classes.arrowPrev ).on( 'click.litbx', function() {
+
+			Core.Run.switch( '<' );
+
+			/*
+			if ( Core.Run.isStart() ) {
+				Core.Events.unbindArrow();
+			}
+			*/
+
+			//Core.Run.switch( '<', Litbx.current.index() );
+
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+		});
+
+	};
+
+
+	/**
 	 * Click events - close lightbox
 	 */
 	Module.prototype.close = function() {
@@ -314,6 +336,21 @@ var Events = function(Litbx, Core) {
 				return false;
 			}
 		});
+
+	};
+
+	/**
+	 * Unbind arrow
+	 *
+	 * not in use
+	 */
+	Module.prototype.unbindArrow = function() {
+
+		Core.Arrows.arrows
+			.off('click.litbx touchstart.litbx');
+
+		$(window)
+			.off('keyup.litbx');
 
 	};
 
@@ -341,6 +378,25 @@ var Helper = function(Litbx, Core) {
 	function Module() {}
 
 
+	/**
+	 * jQuery object of current item
+	 * @param shift
+	 * @return {jquery object}
+	 */
+	Module.prototype.current = function( shift ) {
+
+		switch(shift) {
+			case '++':
+				return Litbx.elements.eq( Litbx.current + 1 );
+
+			case '--':
+				return Litbx.elements.eq( Litbx.current - 1 );
+
+			default:
+				return Litbx.elements.eq( Litbx.current );
+		}
+
+	};
 
 
 	// @return Module
@@ -349,6 +405,63 @@ var Helper = function(Litbx, Core) {
 
 };
 ;/**
+ * --------------------------------
+ * Litbx Images
+ * --------------------------------
+ * Image handling
+ * @return {Litbx.Images}
+ */
+
+var Images = function(Litbx, Core) {
+
+	/**
+	 * Image Module Constructor
+	 */
+	function Module() {
+
+	}
+
+
+	/**
+	 * Load images - spinner
+	 */
+	Module.prototype.load = function() {
+
+		// Show loading
+		$( '.' + Litbx.options.classes.item ).load(function() {
+			Core.Helper.current().removeClass( 'loading' );
+		}).each(function() {
+			//if(this.complete) $(this).load();
+			Core.Helper.current().addClass( 'loading' );
+		});
+
+	};
+
+
+	/**
+	 * Preload image
+	 */
+	Module.prototype.preload = function() {
+
+		if ( Litbx.options.preload ) {
+
+			// Preload next image (>)
+			image_next = new Image();
+			image_next.src = Core.Helper.current( '++' ).attr('href');
+
+			// Preload prev image (<)
+			image_prev = new Image();
+			image_prev.src = Core.Helper.current( '--' ).attr('href');
+
+		}
+
+	};
+
+
+	// @return Module
+	return new Module();
+
+};;/**
  * --------------------------------
  * Litbx Run
  * --------------------------------
@@ -386,24 +499,16 @@ var Run = function(Litbx, Core) {
 
 
 	/**
-	 * jQuery object of current item
-	 * @return {jquery object}
-	 */
-	Module.prototype.current = function() {
-		return Litbx.elements.eq( Litbx.current );
-	};
-
-
-	/**
 	 * Switch image
-	 * @param index
 	 * @param direction
+	 * @param index
 	 */
 	Module.prototype.switch = function ( direction, index ) {
 
 		var preloadMedia,
 		preloadMediaURL,
-		position;
+		position,
+		item;
 
 		// set current index, when not set
 		if ( index === undefined ) {
@@ -422,7 +527,14 @@ var Run = function(Litbx, Core) {
 
 			case '>':
 				if ( this.isEnd() ) {
-					Litbx.current = 0;
+
+					// do this smarter (if in if)
+					if ( Litbx.options.loop) {
+						Litbx.current = 0;
+					} else {
+						Litbx.current = index;
+					}
+
 				} else {
 					Litbx.current = index + 1;
 				}
@@ -430,7 +542,14 @@ var Run = function(Litbx, Core) {
 
 			case '<':
 				if ( this.isStart() ) {
-					Litbx.current = Litbx.groupLength - 1;
+
+					// do this smarter (if in if)
+					if ( Litbx.options.loop) {
+						Litbx.current = Litbx.groupLength - 1;
+					} else {
+						Litbx.current = index;
+					}
+
 				} else {
 					Litbx.current = index - 1;
 				}
@@ -452,14 +571,17 @@ var Run = function(Litbx, Core) {
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
 		//preloadMedia = this.$current().addClass( Litbx.options.classes.current );
-		preloadMedia = this.current().addClass( Litbx.options.classes.current );
+		preloadMedia = Core.Helper.current().addClass( Litbx.options.classes.current );
 		preloadMediaURL = preloadMedia.attr( 'href' );
 
 		// prepare content to replace
-		var item = '<img src="' + preloadMediaURL + '" alt="">';
+		item = '<img src="' + preloadMediaURL + '" alt="">';
 
 		// replace inner content
 		Core.Build.$inner.find('img').replaceWith( item );
+
+		// preload next/prev image
+		Core.Images.preload();
 
 	};
 
@@ -520,10 +642,12 @@ var Litbx = function ( elements, options, trigger ) {
 		maxWidth: 99999,  // not in use
 		maxHeight: 99999,  // not in use
 		aspectRatio: false,  // not in use
-		fitToView: true,  // not in use
+		fitToView: false,  // not in use
 
 		// Click
 		closeClick: false,
+		preload: true,
+		loop: true,
 
 		// Keyboard
 		keyboard: true,
@@ -539,8 +663,8 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: 'litbx__inner',
 			item: 'litbx__item',
 			arrow: 'litbx__arrow',
-			arrowNext: 'next',
-			arrowPrev: 'prev',
+			arrowNext: 'litbx__arrow--next',
+			arrowPrev: 'litbx__arrow--prev',
 			current: 'current',
 			loading: 'loading',
 		},
@@ -552,8 +676,8 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
-			next: '<span class="litbx__arrow prev"><i class="prev">Zurück</i></span>',
-			prev: '<span class="litbx__arrow next"><i class="next">Weiter</i></span>'
+			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">Zurück</i></span>',
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">Weiter</i></span>'
 		},
 
 		// Callbacks
@@ -587,6 +711,7 @@ var Litbx = function ( elements, options, trigger ) {
 	 */
 	var Engine = new Core(this, {
 		Helper: Helper,
+		Images: Images,
 		Run: Run,
 		Animation: Animation,
 		Build: Build,

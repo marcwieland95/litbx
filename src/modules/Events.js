@@ -14,6 +14,8 @@ var Events = function(Litbx, Core) {
 	 */
 	function Module() {
 		this.keyboard();
+		this.next();
+		this.prev();
 		this.close();
 	}
 
@@ -33,6 +35,56 @@ var Events = function(Litbx, Core) {
 
 
 	/**
+	 * Next image
+	 */
+	Module.prototype.next = function() {
+
+		$( '.' + Litbx.options.classes.arrowNext ).on( 'click.litbx', function() {
+
+			Core.Run.switch( '>' );
+
+			/*
+			if ( Core.Run.isEnd() ) {
+				Core.Events.unbindArrow();
+			}
+			*/
+
+			//Core.Run.switch( '>', Litbx.current.index() );
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+		});
+	};
+
+
+	/**
+	 * Prev image
+	 */
+	Module.prototype.prev = function() {
+
+		$( '.' + Litbx.options.classes.arrowPrev ).on( 'click.litbx', function() {
+
+			Core.Run.switch( '<' );
+
+			/*
+			if ( Core.Run.isStart() ) {
+				Core.Events.unbindArrow();
+			}
+			*/
+
+			//Core.Run.switch( '<', Litbx.current.index() );
+
+			//console.log ( Litbx.gallery.get( 8 ) );
+
+			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+		});
+
+	};
+
+
+	/**
 	 * Click events - close lightbox
 	 */
 	Module.prototype.close = function() {
@@ -48,6 +100,21 @@ var Events = function(Litbx, Core) {
 				return false;
 			}
 		});
+
+	};
+
+	/**
+	 * Unbind arrow
+	 *
+	 * not in use
+	 */
+	Module.prototype.unbindArrow = function() {
+
+		Core.Arrows.arrows
+			.off('click.litbx touchstart.litbx');
+
+		$(window)
+			.off('keyup.litbx');
 
 	};
 

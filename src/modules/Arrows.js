@@ -14,8 +14,7 @@ var Arrows = function(Litbx, Core) {
 	 */
 	function Module() {
 		this.build();
-		this.next();
-		this.prev();
+		this.collect();
 	}
 
 	/**
@@ -31,7 +30,6 @@ var Arrows = function(Litbx, Core) {
 		Core.Build.$inner.after( Litbx.options.tpl.prev );
 		Core.Build.$inner.after( Litbx.options.tpl.next );
 
-
 		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
 
 	//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
@@ -39,41 +37,17 @@ var Arrows = function(Litbx, Core) {
 
 	};
 
-	/**
-	 * Next image
-	 */
-	Module.prototype.next = function() {
-
-		$('.litbx__arrow.next').on('click.litbx', function() {
-
-			Core.Run.switch( '>' );
-			//Core.Run.switch( '>', Litbx.current.index() );
-
-			//console.log ( Litbx.gallery.get( 8 ) );
-
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
-
-		});
-	};
-
 
 	/**
-	 * Prev image
+	 * Collect arrow item
+	 * arrows DOM
 	 */
-	Module.prototype.prev = function() {
+	Module.prototype.collect = function() {
 
-		$('.litbx__arrow.prev').on('click.litbx', function() {
-
-			Core.Run.switch( '<' );
-			//Core.Run.switch( '<', Litbx.current.index() );
-
-			//console.log ( Litbx.gallery.get( 8 ) );
-
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
-
-		});
+		this.arrows = $( '.' + Litbx.options.classes.overlay ).find( '.' + Litbx.options.classes.arrow );
 
 	};
+
 
 
 	// @return Module

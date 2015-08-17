@@ -31,10 +31,12 @@ var Litbx = function ( elements, options, trigger ) {
 		maxWidth: 99999,  // not in use
 		maxHeight: 99999,  // not in use
 		aspectRatio: false,  // not in use
-		fitToView: true,  // not in use
+		fitToView: false,  // not in use
 
 		// Click
 		closeClick: false,
+		preload: true,
+		loop: true,
 
 		// Keyboard
 		keyboard: true,
@@ -50,8 +52,8 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: 'litbx__inner',
 			item: 'litbx__item',
 			arrow: 'litbx__arrow',
-			arrowNext: 'next',
-			arrowPrev: 'prev',
+			arrowNext: 'litbx__arrow--next',
+			arrowPrev: 'litbx__arrow--prev',
 			current: 'current',
 			loading: 'loading',
 		},
@@ -63,8 +65,8 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
-			next: '<span class="litbx__arrow prev"><i class="prev">Zurück</i></span>',
-			prev: '<span class="litbx__arrow next"><i class="next">Weiter</i></span>'
+			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">Zurück</i></span>',
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">Weiter</i></span>'
 		},
 
 		// Callbacks
@@ -98,6 +100,7 @@ var Litbx = function ( elements, options, trigger ) {
 	 */
 	var Engine = new Core(this, {
 		Helper: Helper,
+		Images: Images,
 		Run: Run,
 		Animation: Animation,
 		Build: Build,

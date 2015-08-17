@@ -27,20 +27,18 @@ var Build = function(Litbx, Core) {
 		$overlay,
 		$wrap;
 
-		$current = Litbx.elements.eq( Litbx.current );
-
 		//console.log( Litbx.element.attr( 'class' ) );
 		//console.log( Litbx.element );
 
 		//console.log( $(Litbx.current).index() );
 
 		// Add current class
-		$current.addClass( Litbx.options.classes.current );
+		Core.Helper.current().addClass( Litbx.options.classes.current );
 
 		//console.log(Litbx.elements);
 		//console.log(Litbx.current);
 
-		href = $current.attr( 'href' );
+		href = Core.Helper.current().attr( 'href' );
 
 		// Create wrapper
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
@@ -62,13 +60,10 @@ var Build = function(Litbx, Core) {
 		// Insert image
 		$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
 
-		// Show loading
-		$( '.' + Litbx.options.classes.item ).load(function() {
-			$current.removeClass( 'loading' );
-		}).each(function() {
-			//if(this.complete) $(this).load();
-			$current.addClass( 'loading' );
-		});
+		Core.Images.load();
+
+		// preload next/prev image
+		Core.Images.preload();
 
 	};
 
@@ -82,9 +77,10 @@ var Build = function(Litbx, Core) {
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
 
-		// Remove init class
-		Core.Run.current().removeClass( Litbx.options.classes.current );
-		//Litbx.current.siblings().removeClass( Litbx.options.classes.current ); // wrong selector, get right current item
+		// Remove classes
+		Core.Helper.current()
+			.removeClass( Litbx.options.classes.loading )
+			.removeClass( Litbx.options.classes.current );
 
 	};
 

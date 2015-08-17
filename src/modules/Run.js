@@ -36,24 +36,16 @@ var Run = function(Litbx, Core) {
 
 
 	/**
-	 * jQuery object of current item
-	 * @return {jquery object}
-	 */
-	Module.prototype.current = function() {
-		return Litbx.elements.eq( Litbx.current );
-	};
-
-
-	/**
 	 * Switch image
-	 * @param index
 	 * @param direction
+	 * @param index
 	 */
 	Module.prototype.switch = function ( direction, index ) {
 
 		var preloadMedia,
 		preloadMediaURL,
-		position;
+		position,
+		item;
 
 		// set current index, when not set
 		if ( index === undefined ) {
@@ -72,7 +64,14 @@ var Run = function(Litbx, Core) {
 
 			case '>':
 				if ( this.isEnd() ) {
-					Litbx.current = 0;
+
+					// do this smarter (if in if)
+					if ( Litbx.options.loop) {
+						Litbx.current = 0;
+					} else {
+						Litbx.current = index;
+					}
+
 				} else {
 					Litbx.current = index + 1;
 				}
@@ -80,7 +79,14 @@ var Run = function(Litbx, Core) {
 
 			case '<':
 				if ( this.isStart() ) {
-					Litbx.current = Litbx.groupLength - 1;
+
+					// do this smarter (if in if)
+					if ( Litbx.options.loop) {
+						Litbx.current = Litbx.groupLength - 1;
+					} else {
+						Litbx.current = index;
+					}
+
 				} else {
 					Litbx.current = index - 1;
 				}
@@ -102,14 +108,17 @@ var Run = function(Litbx, Core) {
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
 		//preloadMedia = this.$current().addClass( Litbx.options.classes.current );
-		preloadMedia = this.current().addClass( Litbx.options.classes.current );
+		preloadMedia = Core.Helper.current().addClass( Litbx.options.classes.current );
 		preloadMediaURL = preloadMedia.attr( 'href' );
 
 		// prepare content to replace
-		var item = '<img src="' + preloadMediaURL + '" alt="">';
+		item = '<img src="' + preloadMediaURL + '" alt="">';
 
 		// replace inner content
 		Core.Build.$inner.find('img').replaceWith( item );
+
+		// preload next/prev image
+		Core.Images.preload();
 
 	};
 

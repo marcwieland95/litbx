@@ -68,10 +68,10 @@
 .litbx__arrow i.next {
   right: 0;
 }
-.litbx__arrow.prev {
+.litbx__arrow--prev {
   left: 0;
 }
-.litbx__arrow.next {
+.litbx__arrow--next {
   right: 0;
 }
 .litbx.loading::after {
