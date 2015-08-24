@@ -87,7 +87,7 @@
 .litbx__arrow--next {
   right: 0;
 }
-.litbx.loading::after {
+.litbx__overlay.loading::after {
   content: "";
   position: fixed;
   top: 50%;

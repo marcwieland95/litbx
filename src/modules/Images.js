@@ -17,40 +17,19 @@ var Images = function(Litbx, Core) {
 
 
 	/**
-	 * Load images - spinner
-	 */
-	Module.prototype.loading = function() {
-
-		// Show loading
-		$( '.' + Litbx.options.classes.item ).on('load', function() {
-			Core.Helper.current().removeClass( 'loading' );
-
-			console.log('loaded');
-			//return true;
-		}).each(function() {
-			//if(this.complete) $(this).load();
-			Core.Helper.current().addClass( 'loading' );
-
-			console.log('loading');
-			//return false;
-		});
-
-	};
-
-
-	/**
 	 * Load image
 	 */
 	Module.prototype.load = function() {
-
-		//var image_current;
 
 		// Load current image
 		this.currentImage = new Image();
 		this.currentImage.src = Core.Helper.current().attr('href');
 
-		// calc img
-		this.calculate();
+		// Add loading spinner
+		this.loading();
+
+		// Calc image dimensions
+		//this.calculate();
 
 		// Check if gallery has already loaded
 		if ( Litbx.builded ) {
@@ -62,8 +41,38 @@ var Images = function(Litbx, Core) {
 			Litbx.builded = true; // set flag
 		}
 
+		// preload next/prev image
+		this.preload();
+
 		// image callback
 		return this.currentImage;
+
+	};
+
+
+	/**
+	 * Load images - spinner
+	 */
+	Module.prototype.loading = function() {
+
+		$( this.currentImage ).on('load', function() {
+
+			// Calc image dimensions when image has loaded
+			Core.Images.calculate();
+
+			// Remove loading class
+			$('.' + Litbx.options.classes.overlay ).removeClass( 'loading' );
+
+			// Fade image in after everything is loaded and renered
+			$('.litbx__wrapper').fadeIn();
+
+		}).each(function() {
+			// Hide wrapper
+			$('.litbx__wrapper').hide();
+
+			// Add loading class to overlay
+			$('.' + Litbx.options.classes.overlay ).addClass( 'loading' );
+		});
 
 	};
 
@@ -98,7 +107,6 @@ var Images = function(Litbx, Core) {
 	 *
 	 */
 	Module.prototype.calculate = function() {
-
 
 		// Check if images is loaded
 		if ( this.currentImage.complete ) {
@@ -205,6 +213,11 @@ var Images = function(Litbx, Core) {
 
 			//console.log( Litbx.browserWidth );
 			//console.log( Litbx.browserHeight );
+
+		} else {
+
+			// Image failed to load - return message
+			console.log('Image failed to load');
 
 		}
 

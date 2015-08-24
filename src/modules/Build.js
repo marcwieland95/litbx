@@ -69,9 +69,6 @@ var Build = function(Litbx, Core) {
 
 		Core.Images.load();
 
-		// preload next/prev image
-		Core.Images.preload();
-
 	};
 
 
@@ -86,7 +83,6 @@ var Build = function(Litbx, Core) {
 
 		// Remove classes
 		Core.Helper.current()
-			.removeClass( Litbx.options.classes.loading )
 			.removeClass( Litbx.options.classes.current );
 
 	};

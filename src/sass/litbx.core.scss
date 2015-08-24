@@ -80,7 +80,7 @@
 	/*
 		Loading
 	 */
-	&.loading::after {
+	&__overlay.loading::after {
 		content: "";
 		position: fixed;
 		top: 50%;

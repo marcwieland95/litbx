@@ -104,6 +104,7 @@ var Events = function(Litbx, Core) {
 
 	};
 
+
 	/**
 	 * Unbind arrow
 	 *

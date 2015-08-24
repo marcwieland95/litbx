@@ -47,19 +47,18 @@ var Run = function(Litbx, Core) {
 		position,
 		item;
 
-		// set current index, when not set
+		// Set current index, when not set
 		if ( index === undefined ) {
 			//index = Litbx.current.index();
 			//index = Litbx.current.index( '[data-group="' + Litbx.groupAttr + '"]' );
 			index = Litbx.current;
 		}
 
-		// add active class
-		//Litbx.group
+		// Add active class
 		Litbx.elements
 			.eq( index ).removeClass( Litbx.options.classes.current );
 
-		// set current position according to direction
+		// Set current position according to direction
 		switch(direction) {
 
 			case '>':
@@ -125,9 +124,6 @@ var Run = function(Litbx, Core) {
 
 		// replace inner content
 		//Core.Build.$inner.find('img').replaceWith( item );
-
-		// preload next/prev image
-		Core.Images.preload();
 
 	};
 
