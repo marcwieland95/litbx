@@ -22,7 +22,7 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.current = function( shift ) {
 
-		switch(shift) {
+		switch( shift ) {
 			case '++':
 				return Litbx.elements.eq( Litbx.current + 1 );
 
@@ -33,6 +33,35 @@ var Helper = function(Litbx, Core) {
 				return Litbx.elements.eq( Litbx.current );
 		}
 
+	};
+
+
+	/*
+		var isPercentage = function(str) {
+			return isString(str) && str.indexOf('%') > 0;
+		};
+
+		var getScalar = function(orig, dim) {
+			var value = parseFloat(orig, 10) || 0;
+
+			if (dim && isPercentage(orig)) {
+				value = F.getViewport()[ dim ] / 100 * value;
+			}
+
+			return Math.ceil(value);
+		};
+
+		var getValue = function(value, dim) {
+			return getScalar(value, dim) + 'px';
+		};
+	 */
+
+	/**
+	 * Get time
+	 * @source http://underscorejs.org/
+	 */
+	Module.prototype.now = Date.now || function() {
+		return new Date().getTime();
 	};
 
 

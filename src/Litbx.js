@@ -17,32 +17,32 @@ var Litbx = function ( elements, options, trigger ) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		padding: 15,  // not in use
-		margin: [30, 55, 30, 55],  // not in use
+		padding: 50,
+		margin: 70,  // [30, 55, 30, 55]
 		arrows: true,  // not in use
 		closeBtn: true,  // not in use
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
+		flexbox: false, // not in use
 
 		// Dimensions
-		width: 800,  // not in use
-		height: 450,  // not in use
+		width: 900,
+		height: 1200,
 		minWidth: 100,  // not in use
 		minHeight: 100,  // not in use
-		maxWidth: 99999,  // not in use
-		maxHeight: 99999,  // not in use
-		aspectRatio: false,  // not in use
-		fitToView: false,  // not in use
+		maxWidth: 1600,
+		maxHeight: 1600,
+		aspectRatio: true,  // not in use
+		fitToView: true,  // not in use
 
-		// Click
+		// Events
 		closeClick: false,
 		preload: true,
 		loop: true,
-
-		// Keyboard
 		keyboard: true,
 		// nextKeyCode
 		// prevKeyCode
 		// closeKeyCode
+		throttle: 16,
 
 		// Classes
 		classes: {
@@ -91,6 +91,8 @@ var Litbx = function ( elements, options, trigger ) {
 	// Init values
 	this.setup();
 
+	this.builded = false; // set flag for first load
+
 	// Call before init callback
 	this.options.beforeInit();
 
@@ -129,7 +131,8 @@ Litbx.prototype.group = function() {
 
 	//this.galleryGroup = this.current.attr('data-group') || this.current.attr('rel'); // with rel-attr fallback - handle inside if-statement
 
-	if ( this.groupAttr !== undefined ) {
+	// Check if this image is in a gallery or single
+	if ( this.groupAttr !== undefined ) { // maybe set a more useful flag for this -> for later usage
 
 		// cache group selection
 		this.group = $( '[data-group="' + this.groupAttr + '"]' );
@@ -139,6 +142,10 @@ Litbx.prototype.group = function() {
 
 		//this.trigger = this.trigger.filter( this.group );
 		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
+
+	} else {
+
+		this.elements = this.trigger;
 
 	}
 

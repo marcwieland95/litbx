@@ -105,23 +105,31 @@ var Run = function(Litbx, Core) {
 		}
 	*/
 
+		//Core.Images.calculate();
+
+		Core.Images.load();
+
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
 		//preloadMedia = this.$current().addClass( Litbx.options.classes.current );
-		preloadMedia = Core.Helper.current().addClass( Litbx.options.classes.current );
-		preloadMediaURL = preloadMedia.attr( 'href' );
+		//preloadMedia = Core.Helper.current().addClass( Litbx.options.classes.current );
+		//preloadMediaURL = preloadMedia.attr( 'href' );
+
+		// Set new active class
+		Litbx.elements
+			.removeClass( Litbx.options.classes.current )
+			.eq( Litbx.current ).addClass( Litbx.options.classes.current );
 
 		// prepare content to replace
-		item = '<img src="' + preloadMediaURL + '" alt="">';
+		//item = '<img src="' + preloadMediaURL + '" alt="">';
 
 		// replace inner content
-		Core.Build.$inner.find('img').replaceWith( item );
+		//Core.Build.$inner.find('img').replaceWith( item );
 
 		// preload next/prev image
 		Core.Images.preload();
 
 	};
-
 
 	return new Module();
 

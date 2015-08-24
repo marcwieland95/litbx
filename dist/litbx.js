@@ -143,8 +143,8 @@ var Build = function(Litbx, Core) {
 	Module.prototype.init = function () {
 
 		var href,
-		$overlay,
-		$wrap;
+		$overlay;
+		//$wrap;
 
 		//console.log( Litbx.element.attr( 'class' ) );
 		//console.log( Litbx.element );
@@ -157,15 +157,15 @@ var Build = function(Litbx, Core) {
 		//console.log(Litbx.elements);
 		//console.log(Litbx.current);
 
-		href = Core.Helper.current().attr( 'href' );
 
 		// Create wrapper
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
 		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
 
 		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
-		$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
-		this.$inner = $( Litbx.options.tpl.inner ).appendTo( $wrap );
+		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
+		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
+
 		//console.log( $outer );
 
 			/*
@@ -176,8 +176,15 @@ var Build = function(Litbx, Core) {
 					.find('div:last').addClass( Litbx.options.classes.inner );
 			*/
 
-		// Insert image
-		$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
+		//href = Core.Helper.current().attr( 'href' );
+		// Insert image - rebuild this - DRY
+
+		//$( '.' + Litbx.options.classes.inner ).append('<img src="" alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
+
+		//$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
+
+		// add loading state
+		//Core.Images.loading();
 
 		Core.Images.load();
 
@@ -253,6 +260,7 @@ var Events = function(Litbx, Core) {
 		this.next();
 		this.prev();
 		this.close();
+		this.resize();
 	}
 
 
@@ -355,6 +363,55 @@ var Events = function(Litbx, Core) {
 	};
 
 
+	/**
+	 * Browser resize
+	 *
+	 */
+	Module.prototype.resize = function() {
+
+		$(window).on('resize.litbx', this.throttle( function() {
+			Core.Images.calculate();
+		}, Litbx.options.throttle) );
+
+	};
+
+
+	/**
+	 * Throttle
+	 * @source http://underscorejs.org/
+	 */
+	Module.prototype.throttle = function(func, wait, options) {
+		var that = this;
+		var context, args, result;
+		var timeout = null;
+		var previous = 0;
+		if (!options) options = {};
+		var later = function() {
+			previous = options.leading === false ? 0 : Core.Helper.now();
+			timeout = null;
+			result = func.apply(context, args);
+			if (!timeout) context = args = null;
+		};
+		return function() {
+			var now = Core.Helper.now();
+			if (!previous && options.leading === false) previous = now;
+			var remaining = wait - (now - previous);
+			context = this;
+			args = arguments;
+			if (remaining <= 0 || remaining > wait) {
+				if (timeout) {
+					clearTimeout(timeout);
+					timeout = null;
+				}
+				previous = now;
+				result = func.apply(context, args);
+				if (!timeout) context = args = null;
+			} else if (!timeout && options.trailing !== false) {
+				timeout = setTimeout(later, remaining);
+			}
+			return result;
+		};
+	};
 
 
 	// @return Module
@@ -385,7 +442,7 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.current = function( shift ) {
 
-		switch(shift) {
+		switch( shift ) {
 			case '++':
 				return Litbx.elements.eq( Litbx.current + 1 );
 
@@ -396,6 +453,35 @@ var Helper = function(Litbx, Core) {
 				return Litbx.elements.eq( Litbx.current );
 		}
 
+	};
+
+
+	/*
+		var isPercentage = function(str) {
+			return isString(str) && str.indexOf('%') > 0;
+		};
+
+		var getScalar = function(orig, dim) {
+			var value = parseFloat(orig, 10) || 0;
+
+			if (dim && isPercentage(orig)) {
+				value = F.getViewport()[ dim ] / 100 * value;
+			}
+
+			return Math.ceil(value);
+		};
+
+		var getValue = function(value, dim) {
+			return getScalar(value, dim) + 'px';
+		};
+	 */
+
+	/**
+	 * Get time
+	 * @source http://underscorejs.org/
+	 */
+	Module.prototype.now = Date.now || function() {
+		return new Date().getTime();
 	};
 
 
@@ -425,15 +511,51 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Load images - spinner
 	 */
-	Module.prototype.load = function() {
+	Module.prototype.loading = function() {
 
 		// Show loading
-		$( '.' + Litbx.options.classes.item ).load(function() {
+		$( '.' + Litbx.options.classes.item ).on('load', function() {
 			Core.Helper.current().removeClass( 'loading' );
+
+			console.log('loaded');
+			//return true;
 		}).each(function() {
 			//if(this.complete) $(this).load();
 			Core.Helper.current().addClass( 'loading' );
+
+			console.log('loading');
+			//return false;
 		});
+
+	};
+
+
+	/**
+	 * Load image
+	 */
+	Module.prototype.load = function() {
+
+		//var image_current;
+
+		// Load current image
+		this.currentImage = new Image();
+		this.currentImage.src = Core.Helper.current().attr('href');
+
+		// calc img
+		this.calculate();
+
+		// Check if gallery has already loaded
+		if ( Litbx.builded ) {
+			// replace inner content
+			Core.Build.$inner.find('img').replaceWith( this.currentImage );
+		} else {
+			// create inner content
+			$( '.' + Litbx.options.classes.inner ).append( this.currentImage ).find('img:last').addClass( Litbx.options.classes.item );
+			Litbx.builded = true; // set flag
+		}
+
+		// image callback
+		return this.currentImage;
 
 	};
 
@@ -445,6 +567,9 @@ var Images = function(Litbx, Core) {
 
 		if ( Litbx.options.preload ) {
 
+			var image_next,
+			image_prev;
+
 			// Preload next image (>)
 			image_next = new Image();
 			image_next.src = Core.Helper.current( '++' ).attr('href');
@@ -452,6 +577,126 @@ var Images = function(Litbx, Core) {
 			// Preload prev image (<)
 			image_prev = new Image();
 			image_prev.src = Core.Helper.current( '--' ).attr('href');
+
+		}
+
+	};
+
+
+	/**
+	 * Calculate image size
+	 *
+	 * Make sure that this function is loaded when image has loaded
+	 *
+	 */
+	Module.prototype.calculate = function() {
+
+
+		// Check if images is loaded
+		if ( this.currentImage.complete ) {
+		//Litbx.image_current.onload = function(){
+			var width = Litbx.options.width,
+			height = Litbx.options.height,
+			naturalWidth = this.currentImage.naturalWidth,
+			naturalHeight = this.currentImage.naturalHeight,
+			ratio = naturalWidth / naturalHeight, // x < 1 = portrait, x > 1 = landscape
+			margin = Litbx.options.margin,
+			padding = Litbx.options.padding,
+			maxWidth = Math.min(Litbx.options.maxWidth, naturalWidth),
+			maxHeight = Math.min(Litbx.options.maxHeight, naturalHeight),
+			maxViewHeight = $(window).height() - (margin + margin) - (padding + padding), // - margin - padding
+			maxViewWidth = $(window).width() - (margin + margin) - (padding + padding),  // - margin - padding
+			canExpandHeight,
+			canExpandWidth;
+
+			maxViewHeight = Math.min(maxHeight,  maxViewHeight );
+			maxViewWidth = Math.min(maxWidth,  maxViewWidth );
+
+
+			//console.log( ratio );
+
+			//console.log( naturalWidth + ' x ' + naturalHeight );
+
+			/*
+				$.each(["Top", "Right", "Bottom", "Left"], function(i, v) {
+					if (margin[ i ]) {
+						wrap.css('margin' + v, getValue(margin[ i ]));
+					}
+				});
+			 */
+
+			console.log( maxViewHeight );
+			console.log( maxViewWidth );
+
+
+			// set flag for width
+			//if ( (margin + padding + width) < Litbx.browserWidth ) {
+			if ( width < maxViewWidth ) {
+				canExpandWidth = true;
+			} else {
+				canExpandWidth = false;
+			}
+			//console.log(canExpandWidth);
+
+			// set flag for height
+			//if ( (margin + padding + height ) < Litbx.browserHeight ) {
+			if ( height < maxViewHeight ) {
+				canExpandHeight = true;
+			} else {
+				canExpandHeight = false;
+			}
+			//console.log(canExpandHeight);
+
+
+
+			if ( ratio > 1 ) { // landscape
+				width = maxViewWidth;
+				height = maxViewWidth / ratio;
+
+				if ( height > maxViewHeight ) {
+					height = maxViewHeight;
+					width = maxViewHeight * ratio;
+				}
+			}
+
+
+			if ( ratio < 1 ) { // portrait
+				height = maxViewHeight;
+				width = maxViewHeight * ratio;
+
+				if ( width > maxViewWidth ) {
+					width = maxViewWidth;
+					height = maxViewWidth / ratio;
+				}
+			}
+
+
+		/*
+		if ( Litbx.options.fitToView ) {
+			width  = Math.min(maxWidth,  maxViewWidth );
+			height = Math.min(maxHeight, maxViewHeight );
+		}
+		*/
+
+			//Core.Build.$wrap.css({ // undefined ??
+			 $( '.' + Litbx.options.classes.wrapper ).css({
+				'padding': padding,
+				'margin': margin,
+				'width': width,
+				'height': height,
+				//'max-width': maxWidth,
+				//'max-height': maxHeight
+			});
+
+			//var img_width = image_current.width;
+			//var img_height = image_current.height;
+
+
+			//image.aspectRatio =  image.width / image.height;
+			//console.log( image.aspectRatio );
+
+			//console.log( Litbx.browserWidth );
+			//console.log( Litbx.browserHeight );
 
 		}
 
@@ -568,23 +813,31 @@ var Run = function(Litbx, Core) {
 		}
 	*/
 
+		//Core.Images.calculate();
+
+		Core.Images.load();
+
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
 		//preloadMedia = this.$current().addClass( Litbx.options.classes.current );
-		preloadMedia = Core.Helper.current().addClass( Litbx.options.classes.current );
-		preloadMediaURL = preloadMedia.attr( 'href' );
+		//preloadMedia = Core.Helper.current().addClass( Litbx.options.classes.current );
+		//preloadMediaURL = preloadMedia.attr( 'href' );
+
+		// Set new active class
+		Litbx.elements
+			.removeClass( Litbx.options.classes.current )
+			.eq( Litbx.current ).addClass( Litbx.options.classes.current );
 
 		// prepare content to replace
-		item = '<img src="' + preloadMediaURL + '" alt="">';
+		//item = '<img src="' + preloadMediaURL + '" alt="">';
 
 		// replace inner content
-		Core.Build.$inner.find('img').replaceWith( item );
+		//Core.Build.$inner.find('img').replaceWith( item );
 
 		// preload next/prev image
 		Core.Images.preload();
 
 	};
-
 
 	return new Module();
 
@@ -628,32 +881,32 @@ var Litbx = function ( elements, options, trigger ) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		padding: 15,  // not in use
-		margin: [30, 55, 30, 55],  // not in use
+		padding: 50,
+		margin: 70,  // [30, 55, 30, 55]
 		arrows: true,  // not in use
 		closeBtn: true,  // not in use
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
+		flexbox: false, // not in use
 
 		// Dimensions
-		width: 800,  // not in use
-		height: 450,  // not in use
+		width: 900,
+		height: 1200,
 		minWidth: 100,  // not in use
 		minHeight: 100,  // not in use
-		maxWidth: 99999,  // not in use
-		maxHeight: 99999,  // not in use
-		aspectRatio: false,  // not in use
-		fitToView: false,  // not in use
+		maxWidth: 1600,
+		maxHeight: 1600,
+		aspectRatio: true,  // not in use
+		fitToView: true,  // not in use
 
-		// Click
+		// Events
 		closeClick: false,
 		preload: true,
 		loop: true,
-
-		// Keyboard
 		keyboard: true,
 		// nextKeyCode
 		// prevKeyCode
 		// closeKeyCode
+		throttle: 16,
 
 		// Classes
 		classes: {
@@ -702,6 +955,8 @@ var Litbx = function ( elements, options, trigger ) {
 	// Init values
 	this.setup();
 
+	this.builded = false; // set flag for first load
+
 	// Call before init callback
 	this.options.beforeInit();
 
@@ -740,7 +995,8 @@ Litbx.prototype.group = function() {
 
 	//this.galleryGroup = this.current.attr('data-group') || this.current.attr('rel'); // with rel-attr fallback - handle inside if-statement
 
-	if ( this.groupAttr !== undefined ) {
+	// Check if this image is in a gallery or single
+	if ( this.groupAttr !== undefined ) { // maybe set a more useful flag for this -> for later usage
 
 		// cache group selection
 		this.group = $( '[data-group="' + this.groupAttr + '"]' );
@@ -750,6 +1006,10 @@ Litbx.prototype.group = function() {
 
 		//this.trigger = this.trigger.filter( this.group );
 		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
+
+	} else {
+
+		this.elements = this.trigger;
 
 	}
 
