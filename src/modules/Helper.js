@@ -35,6 +35,15 @@ var Helper = function(Litbx, Core) {
 
 	};
 
+	/**
+	 * Add proper unit to value
+	 * @param value
+	 * @return {sting}
+	 */
+	Module.prototype.getValue = function( value ) {
+		return value + 'px';
+	};
+
 
 	/*
 		var isPercentage = function(str) {

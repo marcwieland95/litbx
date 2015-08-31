@@ -7,6 +7,9 @@
 ##Documentation
 In progress
 
+##ToDo
+- Reduce JS in calculation function - achieve more trought css
+
 ##Building
 Build using Grunt and Bower. The following tasks are available:
 - `default` Compiles script and styles into `/dist` folder

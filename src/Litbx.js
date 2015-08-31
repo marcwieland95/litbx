@@ -17,16 +17,16 @@ var Litbx = function ( elements, options, trigger ) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		padding: 50,
-		margin: 70,  // [30, 55, 30, 55]
+		padding: 100,
+		margin: [30, 55, 30, 55], // 200
 		arrows: true,  // not in use
 		closeBtn: true,  // not in use
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
 
 		// Dimensions
-		width: 900,
-		height: 1200,
+		width: 900, // null default
+		height: 1200, // null default
 		minWidth: 100,  // not in use
 		minHeight: 100,  // not in use
 		maxWidth: 1600,
@@ -182,5 +182,15 @@ Litbx.prototype.setup = function() {
 	// Group length
 	this.length = this.group.length; // deprecated
 	this.groupLength = this.group.length;
+
+	// Prepare margin option
+	if ( typeof this.options.margin === 'number' ) {
+		this.options.margin = [this.options.margin, this.options.margin, this.options.margin, this.options.margin];
+	}
+
+	// Prepare padding option
+	if ( typeof this.options.padding === 'number' ) {
+		this.options.padding = [this.options.padding, this.options.padding, this.options.padding, this.options.padding];
+	}
 
 };

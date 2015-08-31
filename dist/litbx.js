@@ -90,8 +90,10 @@ var Arrows = function(Litbx, Core) {
 		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
 
 		// Create arrow after inner-container
-		Core.Build.$inner.after( Litbx.options.tpl.prev );
-		Core.Build.$inner.after( Litbx.options.tpl.next );
+		if ( Litbx.elements.length > 1 ) {
+			Core.Build.$inner.after( Litbx.options.tpl.prev );
+			Core.Build.$inner.after( Litbx.options.tpl.next );
+		}
 
 		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
 
@@ -200,6 +202,9 @@ var Build = function(Litbx, Core) {
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
 
+		// Clean up all binded events
+		Core.Events.unbind();
+
 		// Remove classes
 		Core.Helper.current()
 			.removeClass( Litbx.options.classes.current );
@@ -264,13 +269,17 @@ var Events = function(Litbx, Core) {
 	 * Keyboard events
 	 */
 	Module.prototype.keyboard = function() {
-		if (Litbx.options.keyboard) {
+
+		if ( Litbx.options.keyboard && Litbx.elements.length > 1 ) {
+
 			$(window).on('keyup.litbx', function(event){
 				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
 				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
 				if (event.keyCode === 32) Core.Build.destroy(); // close
 			});
+
 		}
+
 	};
 
 
@@ -279,22 +288,25 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.next = function() {
 
-		$( '.' + Litbx.options.classes.arrowNext ).on( 'click.litbx', function() {
+		if ( Litbx.elements.length > 1 ) {
 
-			Core.Run.switch( '>' );
+			$( '.' + Litbx.options.classes.arrowNext ).on( 'click.litbx', function() {
 
-			/*
-			if ( Core.Run.isEnd() ) {
-				Core.Events.unbindArrow();
-			}
-			*/
+				Core.Run.switch( '>' );
 
-			//Core.Run.switch( '>', Litbx.current.index() );
-			//console.log ( Litbx.gallery.get( 8 ) );
+				/*
+				if ( Core.Run.isEnd() ) {
+					Core.Events.unbindArrow();
+				}
+				*/
 
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+				//Core.Run.switch( '>', Litbx.current.index() );
+				//console.log ( Litbx.gallery.get( 8 ) );
 
-		});
+				//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+			});
+		}
 	};
 
 
@@ -303,24 +315,26 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.prev = function() {
 
-		$( '.' + Litbx.options.classes.arrowPrev ).on( 'click.litbx', function() {
+		if ( Litbx.elements.length > 1 ) {
 
-			Core.Run.switch( '<' );
+			$( '.' + Litbx.options.classes.arrowPrev ).on( 'click.litbx', function() {
 
-			/*
-			if ( Core.Run.isStart() ) {
-				Core.Events.unbindArrow();
-			}
-			*/
+				Core.Run.switch( '<' );
 
-			//Core.Run.switch( '<', Litbx.current.index() );
+				/*
+				if ( Core.Run.isStart() ) {
+					Core.Events.unbindArrow();
+				}
+				*/
 
-			//console.log ( Litbx.gallery.get( 8 ) );
+				//Core.Run.switch( '<', Litbx.current.index() );
 
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+				//console.log ( Litbx.gallery.get( 8 ) );
 
-		});
+				//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
 
+			});
+		}
 	};
 
 
@@ -350,6 +364,20 @@ var Events = function(Litbx, Core) {
 	 * not in use
 	 */
 	Module.prototype.unbindArrow = function() {
+
+		Core.Arrows.arrows
+			.off('click.litbx touchstart.litbx');
+
+		$(window)
+			.off('keyup.litbx');
+
+	};
+
+
+	/*
+	 * Unbind everything
+	 */
+	Module.prototype.unbind = function() {
 
 		Core.Arrows.arrows
 			.off('click.litbx touchstart.litbx');
@@ -452,6 +480,15 @@ var Helper = function(Litbx, Core) {
 
 	};
 
+	/**
+	 * Add proper unit to value
+	 * @param value
+	 * @return {sting}
+	 */
+	Module.prototype.getValue = function( value ) {
+		return value + 'px';
+	};
+
 
 	/*
 		var isPercentage = function(str) {
@@ -550,7 +587,7 @@ var Images = function(Litbx, Core) {
 			Core.Images.calculate();
 
 			// Remove loading class
-			$('.' + Litbx.options.classes.overlay ).removeClass( 'loading' );
+			$( '.' + Litbx.options.classes.overlay ).removeClass( 'loading' );
 
 			// Fade image in after everything is loaded and renered
 			$('.litbx__wrapper').fadeIn();
@@ -607,31 +644,22 @@ var Images = function(Litbx, Core) {
 			ratio = naturalWidth / naturalHeight, // x < 1 = portrait, x > 1 = landscape
 			margin = Litbx.options.margin,
 			padding = Litbx.options.padding,
-			maxWidth = Math.min(Litbx.options.maxWidth, naturalWidth),
-			maxHeight = Math.min(Litbx.options.maxHeight, naturalHeight),
-			maxViewHeight = $(window).height() - (margin + margin) - (padding + padding), // - margin - padding
-			maxViewWidth = $(window).width() - (margin + margin) - (padding + padding),  // - margin - padding
+			maxWidth = Math.min( Litbx.options.maxWidth, naturalWidth ),
+			maxHeight = Math.min( Litbx.options.maxHeight, naturalHeight ),
+			maxViewHeight = $(window).height() - ( margin[0] + margin[2] ) - ( padding[0] + padding[2] ),
+			maxViewWidth = $(window).width() - ( margin[1] + margin[3] ) - ( padding[1] + padding[3] ),
 			canExpandHeight,
 			canExpandWidth;
 
-			maxViewHeight = Math.min(maxHeight,  maxViewHeight );
-			maxViewWidth = Math.min(maxWidth,  maxViewWidth );
-
+			maxViewHeight = Math.min( maxHeight,  maxViewHeight );
+			maxViewWidth = Math.min( maxWidth,  maxViewWidth );
 
 			//console.log( ratio );
 
 			//console.log( naturalWidth + ' x ' + naturalHeight );
 
-			/*
-				$.each(["Top", "Right", "Bottom", "Left"], function(i, v) {
-					if (margin[ i ]) {
-						wrap.css('margin' + v, getValue(margin[ i ]));
-					}
-				});
-			 */
-
-			console.log( maxViewHeight );
-			console.log( maxViewWidth );
+			//console.log( maxViewHeight );
+			//console.log( maxViewWidth );
 
 
 			// set flag for width
@@ -652,29 +680,30 @@ var Images = function(Litbx, Core) {
 			}
 			//console.log(canExpandHeight);
 
-
+			console.log( ratio );
+			console.log( maxViewWidth );
+			console.log( maxViewHeight );
 
 			if ( ratio > 1 ) { // landscape
-				width = maxViewWidth;
-				height = maxViewWidth / ratio;
+				//width = maxViewWidth;
+				maxViewHeight = maxViewWidth / ratio;
 
-				if ( height > maxViewHeight ) {
-					height = maxViewHeight;
-					width = maxViewHeight * ratio;
+				if ( naturalHeight > maxViewHeight ) {
+					//height = maxViewHeight;
+					maxViewWidth = maxViewHeight * ratio;
+
+				}
+
+			} else {  // portrait
+
+				//height = maxViewHeight;
+				maxViewWidth = maxViewHeight * ratio;
+
+				if ( naturalWidth > maxViewWidth ) {
+					//width = maxViewWidth;
+					maxViewHeight = maxViewWidth / ratio;
 				}
 			}
-
-
-			if ( ratio < 1 ) { // portrait
-				height = maxViewHeight;
-				width = maxViewHeight * ratio;
-
-				if ( width > maxViewWidth ) {
-					width = maxViewWidth;
-					height = maxViewWidth / ratio;
-				}
-			}
-
 
 		/*
 		if ( Litbx.options.fitToView ) {
@@ -684,14 +713,23 @@ var Images = function(Litbx, Core) {
 		*/
 
 			//Core.Build.$wrap.css({ // undefined ??
-			 $( '.' + Litbx.options.classes.wrapper ).css({
-				'padding': padding,
-				'margin': margin,
-				'width': width,
-				'height': height,
+			$( '.' + Litbx.options.classes.wrapper ).css({
+				//'padding': 200,
+				//'margin': Litbx.options.margin.toString(),
+				'width': maxViewWidth, // width
+				'height': maxViewHeight, // height
 				//'max-width': maxWidth,
 				//'max-height': maxHeight
 			});
+
+			// set padding and margin
+			$.each( ["top", "right", "bottom", "left"], function( i, direction ) {
+				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
+
+				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
+				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
+			});
+
 
 			//var img_width = image_current.width;
 			//var img_height = image_current.height;
@@ -887,16 +925,16 @@ var Litbx = function ( elements, options, trigger ) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		padding: 50,
-		margin: 70,  // [30, 55, 30, 55]
+		padding: 100,
+		margin: [30, 55, 30, 55], // 200
 		arrows: true,  // not in use
 		closeBtn: true,  // not in use
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
 
 		// Dimensions
-		width: 900,
-		height: 1200,
+		width: 900, // null default
+		height: 1200, // null default
 		minWidth: 100,  // not in use
 		minHeight: 100,  // not in use
 		maxWidth: 1600,
@@ -1052,6 +1090,16 @@ Litbx.prototype.setup = function() {
 	// Group length
 	this.length = this.group.length; // deprecated
 	this.groupLength = this.group.length;
+
+	// Prepare margin option
+	if ( typeof this.options.margin === 'number' ) {
+		this.options.margin = [this.options.margin, this.options.margin, this.options.margin, this.options.margin];
+	}
+
+	// Prepare padding option
+	if ( typeof this.options.padding === 'number' ) {
+		this.options.padding = [this.options.padding, this.options.padding, this.options.padding, this.options.padding];
+	}
 
 };;/**
  * Wire Litbx to jQuery

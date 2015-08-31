@@ -61,7 +61,7 @@ var Images = function(Litbx, Core) {
 			Core.Images.calculate();
 
 			// Remove loading class
-			$('.' + Litbx.options.classes.overlay ).removeClass( 'loading' );
+			$( '.' + Litbx.options.classes.overlay ).removeClass( 'loading' );
 
 			// Fade image in after everything is loaded and renered
 			$('.litbx__wrapper').fadeIn();
@@ -118,31 +118,22 @@ var Images = function(Litbx, Core) {
 			ratio = naturalWidth / naturalHeight, // x < 1 = portrait, x > 1 = landscape
 			margin = Litbx.options.margin,
 			padding = Litbx.options.padding,
-			maxWidth = Math.min(Litbx.options.maxWidth, naturalWidth),
-			maxHeight = Math.min(Litbx.options.maxHeight, naturalHeight),
-			maxViewHeight = $(window).height() - (margin + margin) - (padding + padding), // - margin - padding
-			maxViewWidth = $(window).width() - (margin + margin) - (padding + padding),  // - margin - padding
+			maxWidth = Math.min( Litbx.options.maxWidth, naturalWidth ),
+			maxHeight = Math.min( Litbx.options.maxHeight, naturalHeight ),
+			maxViewHeight = $(window).height() - ( margin[0] + margin[2] ) - ( padding[0] + padding[2] ),
+			maxViewWidth = $(window).width() - ( margin[1] + margin[3] ) - ( padding[1] + padding[3] ),
 			canExpandHeight,
 			canExpandWidth;
 
-			maxViewHeight = Math.min(maxHeight,  maxViewHeight );
-			maxViewWidth = Math.min(maxWidth,  maxViewWidth );
-
+			maxViewHeight = Math.min( maxHeight,  maxViewHeight );
+			maxViewWidth = Math.min( maxWidth,  maxViewWidth );
 
 			//console.log( ratio );
 
 			//console.log( naturalWidth + ' x ' + naturalHeight );
 
-			/*
-				$.each(["Top", "Right", "Bottom", "Left"], function(i, v) {
-					if (margin[ i ]) {
-						wrap.css('margin' + v, getValue(margin[ i ]));
-					}
-				});
-			 */
-
-			console.log( maxViewHeight );
-			console.log( maxViewWidth );
+			//console.log( maxViewHeight );
+			//console.log( maxViewWidth );
 
 
 			// set flag for width
@@ -163,29 +154,30 @@ var Images = function(Litbx, Core) {
 			}
 			//console.log(canExpandHeight);
 
-
+			console.log( ratio );
+			console.log( maxViewWidth );
+			console.log( maxViewHeight );
 
 			if ( ratio > 1 ) { // landscape
-				width = maxViewWidth;
-				height = maxViewWidth / ratio;
+				//width = maxViewWidth;
+				maxViewHeight = maxViewWidth / ratio;
 
-				if ( height > maxViewHeight ) {
-					height = maxViewHeight;
-					width = maxViewHeight * ratio;
+				if ( naturalHeight > maxViewHeight ) {
+					//height = maxViewHeight;
+					maxViewWidth = maxViewHeight * ratio;
+
+				}
+
+			} else {  // portrait
+
+				//height = maxViewHeight;
+				maxViewWidth = maxViewHeight * ratio;
+
+				if ( naturalWidth > maxViewWidth ) {
+					//width = maxViewWidth;
+					maxViewHeight = maxViewWidth / ratio;
 				}
 			}
-
-
-			if ( ratio < 1 ) { // portrait
-				height = maxViewHeight;
-				width = maxViewHeight * ratio;
-
-				if ( width > maxViewWidth ) {
-					width = maxViewWidth;
-					height = maxViewWidth / ratio;
-				}
-			}
-
 
 		/*
 		if ( Litbx.options.fitToView ) {
@@ -195,14 +187,23 @@ var Images = function(Litbx, Core) {
 		*/
 
 			//Core.Build.$wrap.css({ // undefined ??
-			 $( '.' + Litbx.options.classes.wrapper ).css({
-				'padding': padding,
-				'margin': margin,
-				'width': width,
-				'height': height,
+			$( '.' + Litbx.options.classes.wrapper ).css({
+				//'padding': 200,
+				//'margin': Litbx.options.margin.toString(),
+				'width': maxViewWidth, // width
+				'height': maxViewHeight, // height
 				//'max-width': maxWidth,
 				//'max-height': maxHeight
 			});
+
+			// set padding and margin
+			$.each( ["top", "right", "bottom", "left"], function( i, direction ) {
+				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
+
+				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
+				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
+			});
+
 
 			//var img_width = image_current.width;
 			//var img_height = image_current.height;

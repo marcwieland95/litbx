@@ -27,8 +27,10 @@ var Arrows = function(Litbx, Core) {
 		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
 
 		// Create arrow after inner-container
-		Core.Build.$inner.after( Litbx.options.tpl.prev );
-		Core.Build.$inner.after( Litbx.options.tpl.next );
+		if ( Litbx.elements.length > 1 ) {
+			Core.Build.$inner.after( Litbx.options.tpl.prev );
+			Core.Build.$inner.after( Litbx.options.tpl.next );
+		}
 
 		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
 

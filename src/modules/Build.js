@@ -81,6 +81,9 @@ var Build = function(Litbx, Core) {
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
 
+		// Clean up all binded events
+		Core.Events.unbind();
+
 		// Remove classes
 		Core.Helper.current()
 			.removeClass( Litbx.options.classes.current );

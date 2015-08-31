@@ -25,13 +25,17 @@ var Events = function(Litbx, Core) {
 	 * Keyboard events
 	 */
 	Module.prototype.keyboard = function() {
-		if (Litbx.options.keyboard) {
+
+		if ( Litbx.options.keyboard && Litbx.elements.length > 1 ) {
+
 			$(window).on('keyup.litbx', function(event){
 				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
 				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
 				if (event.keyCode === 32) Core.Build.destroy(); // close
 			});
+
 		}
+
 	};
 
 
@@ -40,22 +44,25 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.next = function() {
 
-		$( '.' + Litbx.options.classes.arrowNext ).on( 'click.litbx', function() {
+		if ( Litbx.elements.length > 1 ) {
 
-			Core.Run.switch( '>' );
+			$( '.' + Litbx.options.classes.arrowNext ).on( 'click.litbx', function() {
 
-			/*
-			if ( Core.Run.isEnd() ) {
-				Core.Events.unbindArrow();
-			}
-			*/
+				Core.Run.switch( '>' );
 
-			//Core.Run.switch( '>', Litbx.current.index() );
-			//console.log ( Litbx.gallery.get( 8 ) );
+				/*
+				if ( Core.Run.isEnd() ) {
+					Core.Events.unbindArrow();
+				}
+				*/
 
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+				//Core.Run.switch( '>', Litbx.current.index() );
+				//console.log ( Litbx.gallery.get( 8 ) );
 
-		});
+				//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+
+			});
+		}
 	};
 
 
@@ -64,24 +71,26 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.prev = function() {
 
-		$( '.' + Litbx.options.classes.arrowPrev ).on( 'click.litbx', function() {
+		if ( Litbx.elements.length > 1 ) {
 
-			Core.Run.switch( '<' );
+			$( '.' + Litbx.options.classes.arrowPrev ).on( 'click.litbx', function() {
 
-			/*
-			if ( Core.Run.isStart() ) {
-				Core.Events.unbindArrow();
-			}
-			*/
+				Core.Run.switch( '<' );
 
-			//Core.Run.switch( '<', Litbx.current.index() );
+				/*
+				if ( Core.Run.isStart() ) {
+					Core.Events.unbindArrow();
+				}
+				*/
 
-			//console.log ( Litbx.gallery.get( 8 ) );
+				//Core.Run.switch( '<', Litbx.current.index() );
 
-			//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
+				//console.log ( Litbx.gallery.get( 8 ) );
 
-		});
+				//nextItem = Litbx.element.next( '[rel="' + Litbx.galleryRel + '"]' ).addClass('next');
 
+			});
+		}
 	};
 
 
@@ -111,6 +120,20 @@ var Events = function(Litbx, Core) {
 	 * not in use
 	 */
 	Module.prototype.unbindArrow = function() {
+
+		Core.Arrows.arrows
+			.off('click.litbx touchstart.litbx');
+
+		$(window)
+			.off('keyup.litbx');
+
+	};
+
+
+	/*
+	 * Unbind everything
+	 */
+	Module.prototype.unbind = function() {
 
 		Core.Arrows.arrows
 			.off('click.litbx touchstart.litbx');
