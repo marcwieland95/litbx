@@ -20,5 +20,12 @@ Build using Grunt and Bower. The following tasks are available:
 ##Features
 See [Trello-Board](https://trello.com/b/kjfwYtGe/litbx) to check future feature and current work state.
 
+##Changelog
+### Beta 1 (Sprint 1) - 06.09.2015
+* Bootstrap (3)
+* Grunt, Bower and Travis (1)
+* Image support (3)
+* Calculate width and height (2)
+
 ##License
 Litbx is Copyright © [Marc Wieland](http://marcwieland.ch) and is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT).

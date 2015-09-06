@@ -1,3 +1,6 @@
+@blue: rgb(55, 70, 149);
+@white: rgb(255, 255, 255);
+
 .litbx {
 
 	@that: .litbx;
@@ -8,7 +11,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(255, 255, 255, 0.5);
+		background-color: fade(@white, 50%);
 
 		display: flex;
 		justify-content: center;
@@ -19,12 +22,7 @@
 	&__wrapper {
 		position: relative;
 		box-sizing: content-box;
-		/*
-		height: 90%;
-		width: 40%;
-		*/
-		background-color: #fff;
-
+		background-color: @white;
 
 		display: flex;
 		justify-content: center;
@@ -43,29 +41,34 @@
 	}
 
 	&__item {
-		//position: relative;
-		/*
-		height: 90%;
-		width: auto;
-		*/
+
 	}
+
 
 	/*
 		Arrow
 	 */
+
 	&__arrow {
 		position: absolute;
 		cursor: pointer;
 		width: 30%;
 		top: 0;
 		bottom: 0;
-		background-color: rgba(200, 200, 200, 0.1);
+		background-color: fade(@white, 0%);
 
 		i {
 			position: absolute;
 			top: 50%;
-			background-color: green;
-			padding: 10px 20px;
+			transform: translateY(-50%);
+			background-color: @white;
+			//padding: 10px 20px;
+			height: 70px;
+			width: 70px;
+			font-size: 2rem;
+			text-align: center;
+			line-height: 70px;
+			color: @blue;
 
 			&.prev { left: 0; }
 			&.next { right: 0; }
@@ -77,9 +80,11 @@
 
 	}
 
+
 	/*
 		Loading
 	 */
+
 	&__overlay.loading::after {
 		content: "";
 		position: fixed;
@@ -88,7 +93,7 @@
 		z-index: 101;
 		width: 40px;
 		height: 40px;
-		background-color: yellow;
+		background-color: @blue;
 
 		animation: sk-rotateplane 1.2s infinite ease-in-out;
 	}

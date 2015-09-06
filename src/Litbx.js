@@ -17,7 +17,7 @@ var Litbx = function ( elements, options, trigger ) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		padding: 100,
+		padding: 70,
 		margin: [30, 55, 30, 55], // 200
 		arrows: true,  // not in use
 		closeBtn: true,  // not in use
@@ -25,18 +25,19 @@ var Litbx = function ( elements, options, trigger ) {
 		flexbox: false, // not in use
 
 		// Dimensions
-		width: 900, // null default
-		height: 1200, // null default
+		width: null, // null default - 900
+		height: null, // null default - 1200
 		minWidth: 100,  // not in use
 		minHeight: 100,  // not in use
 		maxWidth: 1600,
 		maxHeight: 1600,
-		aspectRatio: true,  // not in use
-		fitToView: true,  // not in use
+		aspectRatio: true,
+		fitToView: false, // not tested
 
 		// Events
 		closeClick: false,
 		preload: true,
+		// preloadNumber - int or array (forward, backward)
 		loop: true,
 		keyboard: true,
 		// nextKeyCode
@@ -65,8 +66,8 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
-			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">Zurück</i></span>',
-			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">Weiter</i></span>'
+			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>'
 		},
 
 		// Callbacks

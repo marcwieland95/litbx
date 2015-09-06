@@ -125,75 +125,80 @@ var Images = function(Litbx, Core) {
 			canExpandHeight,
 			canExpandWidth;
 
+			//width = if ( width != null )
+
 			maxViewHeight = Math.min( maxHeight,  maxViewHeight );
 			maxViewWidth = Math.min( maxWidth,  maxViewWidth );
 
-			//console.log( ratio );
 
-			//console.log( naturalWidth + ' x ' + naturalHeight );
-
-			//console.log( maxViewHeight );
-			//console.log( maxViewWidth );
-
-
-			// set flag for width
+			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
 			if ( width < maxViewWidth ) {
 				canExpandWidth = true;
 			} else {
 				canExpandWidth = false;
 			}
-			//console.log(canExpandWidth);
 
-			// set flag for height
+			// set flag for height - not in use
 			//if ( (margin + padding + height ) < Litbx.browserHeight ) {
 			if ( height < maxViewHeight ) {
 				canExpandHeight = true;
 			} else {
 				canExpandHeight = false;
 			}
-			//console.log(canExpandHeight);
 
-			console.log( ratio );
-			console.log( maxViewWidth );
-			console.log( maxViewHeight );
 
-			if ( ratio > 1 ) { // landscape
-				//width = maxViewWidth;
-				maxViewHeight = maxViewWidth / ratio;
+			// Keep aspect ratio
+			if ( Litbx.options.aspectRatio ) {
 
-				if ( naturalHeight > maxViewHeight ) {
-					//height = maxViewHeight;
-					maxViewWidth = maxViewHeight * ratio;
+				if ( ratio > 1 ) { // landscape
+
+					height = maxViewWidth / ratio;
+					width = maxViewWidth;
+
+					if ( height > maxViewHeight ) {
+
+						height = maxViewHeight;
+						width = height * ratio;
+
+					}
+
+				} else {  // portrait
+
+					width = maxViewHeight * ratio;
+					height = maxViewHeight;
+
+					if ( width > maxViewWidth ) {
+
+						width = maxViewWidth;
+						height = width / ratio;
+					}
+				}
+
+			} else {
+
+				if ( Litbx.options.fitToView ) {
+
+					width  = Math.min(maxWidth,  maxViewWidth );
+					height = Math.min(maxHeight, maxViewHeight );
+
+				} else {
+
+					width = width; // width have to be set in options
+					height = height; // height have to be set in options
 
 				}
 
-			} else {  // portrait
-
-				//height = maxViewHeight;
-				maxViewWidth = maxViewHeight * ratio;
-
-				if ( naturalWidth > maxViewWidth ) {
-					//width = maxViewWidth;
-					maxViewHeight = maxViewWidth / ratio;
-				}
 			}
-
-		/*
-		if ( Litbx.options.fitToView ) {
-			width  = Math.min(maxWidth,  maxViewWidth );
-			height = Math.min(maxHeight, maxViewHeight );
-		}
-		*/
 
 			//Core.Build.$wrap.css({ // undefined ??
 			$( '.' + Litbx.options.classes.wrapper ).css({
 				//'padding': 200,
 				//'margin': Litbx.options.margin.toString(),
-				'width': maxViewWidth, // width
-				'height': maxViewHeight, // height
-				//'max-width': maxWidth,
-				//'max-height': maxHeight
+				'width': width, // width
+				'height': height, // height
+				'max-width': maxWidth,
+				'max-height': maxHeight
 			});
 
 			// set padding and margin
@@ -204,16 +209,6 @@ var Images = function(Litbx, Core) {
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
 			});
 
-
-			//var img_width = image_current.width;
-			//var img_height = image_current.height;
-
-
-			//image.aspectRatio =  image.width / image.height;
-			//console.log( image.aspectRatio );
-
-			//console.log( Litbx.browserWidth );
-			//console.log( Litbx.browserHeight );
 
 		} else {
 

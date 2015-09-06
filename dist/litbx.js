@@ -651,75 +651,80 @@ var Images = function(Litbx, Core) {
 			canExpandHeight,
 			canExpandWidth;
 
+			//width = if ( width != null )
+
 			maxViewHeight = Math.min( maxHeight,  maxViewHeight );
 			maxViewWidth = Math.min( maxWidth,  maxViewWidth );
 
-			//console.log( ratio );
 
-			//console.log( naturalWidth + ' x ' + naturalHeight );
-
-			//console.log( maxViewHeight );
-			//console.log( maxViewWidth );
-
-
-			// set flag for width
+			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
 			if ( width < maxViewWidth ) {
 				canExpandWidth = true;
 			} else {
 				canExpandWidth = false;
 			}
-			//console.log(canExpandWidth);
 
-			// set flag for height
+			// set flag for height - not in use
 			//if ( (margin + padding + height ) < Litbx.browserHeight ) {
 			if ( height < maxViewHeight ) {
 				canExpandHeight = true;
 			} else {
 				canExpandHeight = false;
 			}
-			//console.log(canExpandHeight);
 
-			console.log( ratio );
-			console.log( maxViewWidth );
-			console.log( maxViewHeight );
 
-			if ( ratio > 1 ) { // landscape
-				//width = maxViewWidth;
-				maxViewHeight = maxViewWidth / ratio;
+			// Keep aspect ratio
+			if ( Litbx.options.aspectRatio ) {
 
-				if ( naturalHeight > maxViewHeight ) {
-					//height = maxViewHeight;
-					maxViewWidth = maxViewHeight * ratio;
+				if ( ratio > 1 ) { // landscape
+
+					height = maxViewWidth / ratio;
+					width = maxViewWidth;
+
+					if ( height > maxViewHeight ) {
+
+						height = maxViewHeight;
+						width = height * ratio;
+
+					}
+
+				} else {  // portrait
+
+					width = maxViewHeight * ratio;
+					height = maxViewHeight;
+
+					if ( width > maxViewWidth ) {
+
+						width = maxViewWidth;
+						height = width / ratio;
+					}
+				}
+
+			} else {
+
+				if ( Litbx.options.fitToView ) {
+
+					width  = Math.min(maxWidth,  maxViewWidth );
+					height = Math.min(maxHeight, maxViewHeight );
+
+				} else {
+
+					width = width; // width have to be set in options
+					height = height; // height have to be set in options
 
 				}
 
-			} else {  // portrait
-
-				//height = maxViewHeight;
-				maxViewWidth = maxViewHeight * ratio;
-
-				if ( naturalWidth > maxViewWidth ) {
-					//width = maxViewWidth;
-					maxViewHeight = maxViewWidth / ratio;
-				}
 			}
-
-		/*
-		if ( Litbx.options.fitToView ) {
-			width  = Math.min(maxWidth,  maxViewWidth );
-			height = Math.min(maxHeight, maxViewHeight );
-		}
-		*/
 
 			//Core.Build.$wrap.css({ // undefined ??
 			$( '.' + Litbx.options.classes.wrapper ).css({
 				//'padding': 200,
 				//'margin': Litbx.options.margin.toString(),
-				'width': maxViewWidth, // width
-				'height': maxViewHeight, // height
-				//'max-width': maxWidth,
-				//'max-height': maxHeight
+				'width': width, // width
+				'height': height, // height
+				'max-width': maxWidth,
+				'max-height': maxHeight
 			});
 
 			// set padding and margin
@@ -730,16 +735,6 @@ var Images = function(Litbx, Core) {
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
 			});
 
-
-			//var img_width = image_current.width;
-			//var img_height = image_current.height;
-
-
-			//image.aspectRatio =  image.width / image.height;
-			//console.log( image.aspectRatio );
-
-			//console.log( Litbx.browserWidth );
-			//console.log( Litbx.browserHeight );
 
 		} else {
 
@@ -925,7 +920,7 @@ var Litbx = function ( elements, options, trigger ) {
 	 * @type {Object}
 	 */
 	var defaults = {
-		padding: 100,
+		padding: 70,
 		margin: [30, 55, 30, 55], // 200
 		arrows: true,  // not in use
 		closeBtn: true,  // not in use
@@ -933,18 +928,19 @@ var Litbx = function ( elements, options, trigger ) {
 		flexbox: false, // not in use
 
 		// Dimensions
-		width: 900, // null default
-		height: 1200, // null default
+		width: null, // null default - 900
+		height: null, // null default - 1200
 		minWidth: 100,  // not in use
 		minHeight: 100,  // not in use
 		maxWidth: 1600,
 		maxHeight: 1600,
-		aspectRatio: true,  // not in use
-		fitToView: true,  // not in use
+		aspectRatio: true,
+		fitToView: false, // not tested
 
 		// Events
 		closeClick: false,
 		preload: true,
+		// preloadNumber - int or array (forward, backward)
 		loop: true,
 		keyboard: true,
 		// nextKeyCode
@@ -973,8 +969,8 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
-			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">Zurück</i></span>',
-			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">Weiter</i></span>'
+			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>'
 		},
 
 		// Callbacks
