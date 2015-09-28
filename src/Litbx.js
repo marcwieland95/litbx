@@ -57,7 +57,12 @@ var Litbx = function ( elements, options, trigger ) {
 			arrowPrev: 'litbx__arrow--prev',
 			current: 'current',
 			loading: 'loading',
+			title: 'litbx__title',
 		},
+
+		// Title
+		title: true,
+		titlePosition: 'outside', // inside, outside -> not implemented
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -67,7 +72,8 @@ var Litbx = function ( elements, options, trigger ) {
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
 			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
-			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>'
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
+			title: '<span class="litbx__title"></span>'
 		},
 
 		// Callbacks
@@ -108,6 +114,7 @@ var Litbx = function ( elements, options, trigger ) {
 		Animation: Animation,
 		Build: Build,
 		Arrows: Arrows,
+		Title: Title,
 		Events: Events,
 		Touch: Touch,
 		Api: Api

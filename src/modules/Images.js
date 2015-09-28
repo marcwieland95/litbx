@@ -67,11 +67,13 @@ var Images = function(Litbx, Core) {
 			$('.litbx__wrapper').fadeIn();
 
 		}).each(function() {
+
 			// Hide wrapper
 			$('.litbx__wrapper').hide();
 
 			// Add loading class to overlay
 			$('.' + Litbx.options.classes.overlay ).addClass( 'loading' );
+
 		});
 
 	};
@@ -173,6 +175,7 @@ var Images = function(Litbx, Core) {
 						width = maxViewWidth;
 						height = width / ratio;
 					}
+
 				}
 
 			} else {
@@ -193,20 +196,24 @@ var Images = function(Litbx, Core) {
 
 			//Core.Build.$wrap.css({ // undefined ??
 			$( '.' + Litbx.options.classes.wrapper ).css({
+
 				//'padding': 200,
 				//'margin': Litbx.options.margin.toString(),
 				'width': width, // width
 				'height': height, // height
 				'max-width': maxWidth,
 				'max-height': maxHeight
+
 			});
 
 			// set padding and margin
 			$.each( ["top", "right", "bottom", "left"], function( i, direction ) {
+
 				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
 
 				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
+
 			});
 
 

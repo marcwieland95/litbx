@@ -82,6 +82,31 @@ $white: rgb(255, 255, 255) !default;
 
 
 	/*
+		Title
+	 */
+
+	&__title {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 50px;
+		background-color: grey;
+
+		&.inside {
+
+		}
+
+		&.outside {
+
+			transform: translateY(100%);
+
+		}
+	}
+
+
+
+	/*
 		Loading
 	 */
 

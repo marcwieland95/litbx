@@ -168,6 +168,11 @@ var Build = function(Litbx, Core) {
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
 
+		// Build markup for title
+		if ( Litbx.options.title ) {
+			this.$title = $( Litbx.options.tpl.title ).appendTo( this.$wrap );
+		}
+
 		//console.log( $outer );
 
 			/*
@@ -593,11 +598,13 @@ var Images = function(Litbx, Core) {
 			$('.litbx__wrapper').fadeIn();
 
 		}).each(function() {
+
 			// Hide wrapper
 			$('.litbx__wrapper').hide();
 
 			// Add loading class to overlay
 			$('.' + Litbx.options.classes.overlay ).addClass( 'loading' );
+
 		});
 
 	};
@@ -699,6 +706,7 @@ var Images = function(Litbx, Core) {
 						width = maxViewWidth;
 						height = width / ratio;
 					}
+
 				}
 
 			} else {
@@ -719,20 +727,24 @@ var Images = function(Litbx, Core) {
 
 			//Core.Build.$wrap.css({ // undefined ??
 			$( '.' + Litbx.options.classes.wrapper ).css({
+
 				//'padding': 200,
 				//'margin': Litbx.options.margin.toString(),
 				'width': width, // width
 				'height': height, // height
 				'max-width': maxWidth,
 				'max-height': maxHeight
+
 			});
 
 			// set padding and margin
 			$.each( ["top", "right", "bottom", "left"], function( i, direction ) {
+
 				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
 
 				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
+
 			});
 
 
@@ -823,7 +835,9 @@ var Run = function(Litbx, Core) {
 					}
 
 				} else {
+
 					Litbx.current = index + 1;
+
 				}
 				break;
 
@@ -838,13 +852,17 @@ var Run = function(Litbx, Core) {
 					}
 
 				} else {
+
 					Litbx.current = index - 1;
+
 				}
 				break;
 
 			case '=':
+
 				Litbx.current = index;
 				break;
+
 		}
 
 	/*
@@ -858,6 +876,8 @@ var Run = function(Litbx, Core) {
 		//Core.Images.calculate();
 
 		Core.Images.load();
+
+		Core.Title.build();
 
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
@@ -882,6 +902,51 @@ var Run = function(Litbx, Core) {
 
 };
 ;/**
+ * --------------------------------
+ * Litbx Title
+ * --------------------------------
+ * Title handling
+ * @return {Litbx.Title}
+ */
+
+var Title = function(Litbx, Core) {
+
+	/**
+	 * Image Module Constructor
+	 */
+	function Module() {
+		this.build();
+	}
+
+
+	/**
+	 * Build title
+	 */
+	Module.prototype.build = function() {
+
+		if ( Litbx.options.title ) {
+
+			var currentTitle = Core.Helper.current().attr('title');
+
+			// Remove title when not set
+			if ( typeof currentTitle === 'undefined' ) {
+
+				currentTitle = '';
+
+			}
+
+			Core.Build.$title
+				.html( currentTitle )
+				.addClass( Litbx.options.titlePosition );
+
+		}
+
+	};
+
+	// @return Module
+	return new Module();
+
+};;/**
  * --------------------------------
  * Litbx Touch
  * --------------------------------
@@ -960,7 +1025,12 @@ var Litbx = function ( elements, options, trigger ) {
 			arrowPrev: 'litbx__arrow--prev',
 			current: 'current',
 			loading: 'loading',
+			title: 'litbx__title',
 		},
+
+		// Title
+		title: true,
+		titlePosition: 'outside', // inside, outside -> not implemented
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -970,7 +1040,8 @@ var Litbx = function ( elements, options, trigger ) {
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
 			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
-			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>'
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
+			title: '<span class="litbx__title"></span>'
 		},
 
 		// Callbacks
@@ -1011,6 +1082,7 @@ var Litbx = function ( elements, options, trigger ) {
 		Animation: Animation,
 		Build: Build,
 		Arrows: Arrows,
+		Title: Title,
 		Events: Events,
 		Touch: Touch,
 		Api: Api

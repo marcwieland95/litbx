@@ -47,6 +47,11 @@ var Build = function(Litbx, Core) {
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
 
+		// Build markup for title
+		if ( Litbx.options.title ) {
+			this.$title = $( Litbx.options.tpl.title ).appendTo( this.$wrap );
+		}
+
 		//console.log( $outer );
 
 			/*

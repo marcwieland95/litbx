@@ -72,7 +72,9 @@ var Run = function(Litbx, Core) {
 					}
 
 				} else {
+
 					Litbx.current = index + 1;
+
 				}
 				break;
 
@@ -87,13 +89,17 @@ var Run = function(Litbx, Core) {
 					}
 
 				} else {
+
 					Litbx.current = index - 1;
+
 				}
 				break;
 
 			case '=':
+
 				Litbx.current = index;
 				break;
+
 		}
 
 	/*
@@ -107,6 +113,8 @@ var Run = function(Litbx, Core) {
 		//Core.Images.calculate();
 
 		Core.Images.load();
+
+		Core.Title.build();
 
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );

@@ -3,6 +3,9 @@
 		Arrow
 	 */
   /*
+		Title
+	 */
+  /*
 		Loading
 	 */
 }
@@ -84,6 +87,19 @@
 }
 .litbx__arrow--next {
   right: 0;
+}
+.litbx__title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: grey;
+}
+.litbx__title.outside {
+  -webkit-transform: translateY(100%);
+      -ms-transform: translateY(100%);
+          transform: translateY(100%);
 }
 .litbx__overlay.loading::after {
   content: "";
