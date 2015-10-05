@@ -280,7 +280,7 @@ var Events = function(Litbx, Core) {
 			$(window).on('keyup.litbx', function(event){
 				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
 				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
-				if (event.keyCode === 32) Core.Build.destroy(); // close
+				if (event.keyCode === 32 || event.keyCode === 27 ) Core.Build.destroy(); // close
 			});
 
 		}
@@ -485,6 +485,7 @@ var Helper = function(Litbx, Core) {
 
 	};
 
+
 	/**
 	 * Add proper unit to value
 	 * @param value
@@ -564,12 +565,15 @@ var Images = function(Litbx, Core) {
 
 		// Check if gallery has already loaded
 		if ( Litbx.builded ) {
+
 			// replace inner content
 			Core.Build.$inner.find('img').replaceWith( this.currentImage );
+
 		} else {
+
 			// create inner content
 			$( '.' + Litbx.options.classes.inner ).append( this.currentImage ).find('img:last').addClass( Litbx.options.classes.item );
-			Litbx.builded = true; // set flag
+
 		}
 
 		// preload next/prev image
@@ -667,17 +671,25 @@ var Images = function(Litbx, Core) {
 			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
 			if ( width < maxViewWidth ) {
+
 				canExpandWidth = true;
+
 			} else {
+
 				canExpandWidth = false;
+
 			}
 
 			// set flag for height - not in use
 			//if ( (margin + padding + height ) < Litbx.browserHeight ) {
 			if ( height < maxViewHeight ) {
+
 				canExpandHeight = true;
+
 			} else {
+
 				canExpandHeight = false;
+
 			}
 
 
@@ -742,7 +754,7 @@ var Images = function(Litbx, Core) {
 
 				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
 
-				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
+				$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
 
 			});
@@ -809,6 +821,8 @@ var Run = function(Litbx, Core) {
 		preloadMediaURL,
 		position,
 		item;
+
+		Litbx.builded = true; // set flag
 
 		// Set current index, when not set
 		if ( index === undefined ) {
@@ -938,6 +952,15 @@ var Title = function(Litbx, Core) {
 			Core.Build.$title
 				.html( currentTitle )
 				.addClass( Litbx.options.titlePosition );
+
+
+		}
+
+		// Measure title height and add margin bottom - just on first run
+		if ( !Litbx.builded && Litbx.options.titlePosition === 'outside' ) {
+
+			var title_height = $( '.' + Litbx.options.classes.title ).height();
+			Litbx.options.margin[2] += title_height;
 
 		}
 
@@ -1136,12 +1159,17 @@ Litbx.prototype.collect = function() {
 
 	// Set current
 	if (this.options.startAt) { // falsy value -> 0 or false
+
 		this.currentIndex = parseInt( this.options.startAt - 1 );
+
 	} else {
+
 		// false: start on trigger image
 		//this.currentIndex = this.trigger.index();
 		this.currentIndex = this.trigger.index( '[data-group="' + this.groupAttr + '"]' ); // get index relative to group
+
 	}
+
 	this.current = this.currentIndex;
 	//console.log(this.current);
 
@@ -1161,12 +1189,16 @@ Litbx.prototype.setup = function() {
 
 	// Prepare margin option
 	if ( typeof this.options.margin === 'number' ) {
+
 		this.options.margin = [this.options.margin, this.options.margin, this.options.margin, this.options.margin];
+
 	}
 
 	// Prepare padding option
 	if ( typeof this.options.padding === 'number' ) {
+
 		this.options.padding = [this.options.padding, this.options.padding, this.options.padding, this.options.padding];
+
 	}
 
 };;/**

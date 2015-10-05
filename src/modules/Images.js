@@ -33,12 +33,15 @@ var Images = function(Litbx, Core) {
 
 		// Check if gallery has already loaded
 		if ( Litbx.builded ) {
+
 			// replace inner content
 			Core.Build.$inner.find('img').replaceWith( this.currentImage );
+
 		} else {
+
 			// create inner content
 			$( '.' + Litbx.options.classes.inner ).append( this.currentImage ).find('img:last').addClass( Litbx.options.classes.item );
-			Litbx.builded = true; // set flag
+
 		}
 
 		// preload next/prev image
@@ -136,17 +139,25 @@ var Images = function(Litbx, Core) {
 			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
 			if ( width < maxViewWidth ) {
+
 				canExpandWidth = true;
+
 			} else {
+
 				canExpandWidth = false;
+
 			}
 
 			// set flag for height - not in use
 			//if ( (margin + padding + height ) < Litbx.browserHeight ) {
 			if ( height < maxViewHeight ) {
+
 				canExpandHeight = true;
+
 			} else {
+
 				canExpandHeight = false;
+
 			}
 
 
@@ -211,7 +222,7 @@ var Images = function(Litbx, Core) {
 
 				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
 
-				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
+				$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
 
 			});

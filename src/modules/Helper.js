@@ -35,6 +35,7 @@ var Helper = function(Litbx, Core) {
 
 	};
 
+
 	/**
 	 * Add proper unit to value
 	 * @param value

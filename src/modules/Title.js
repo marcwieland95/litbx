@@ -36,6 +36,15 @@ var Title = function(Litbx, Core) {
 				.html( currentTitle )
 				.addClass( Litbx.options.titlePosition );
 
+
+		}
+
+		// Measure title height and add margin bottom - just on first run
+		if ( !Litbx.builded && Litbx.options.titlePosition === 'outside' ) {
+
+			var title_height = $( '.' + Litbx.options.classes.title ).height();
+			Litbx.options.margin[2] += title_height;
+
 		}
 
 	};

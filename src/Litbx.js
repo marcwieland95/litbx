@@ -168,12 +168,17 @@ Litbx.prototype.collect = function() {
 
 	// Set current
 	if (this.options.startAt) { // falsy value -> 0 or false
+
 		this.currentIndex = parseInt( this.options.startAt - 1 );
+
 	} else {
+
 		// false: start on trigger image
 		//this.currentIndex = this.trigger.index();
 		this.currentIndex = this.trigger.index( '[data-group="' + this.groupAttr + '"]' ); // get index relative to group
+
 	}
+
 	this.current = this.currentIndex;
 	//console.log(this.current);
 
@@ -193,12 +198,16 @@ Litbx.prototype.setup = function() {
 
 	// Prepare margin option
 	if ( typeof this.options.margin === 'number' ) {
+
 		this.options.margin = [this.options.margin, this.options.margin, this.options.margin, this.options.margin];
+
 	}
 
 	// Prepare padding option
 	if ( typeof this.options.padding === 'number' ) {
+
 		this.options.padding = [this.options.padding, this.options.padding, this.options.padding, this.options.padding];
+
 	}
 
 };

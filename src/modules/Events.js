@@ -31,7 +31,7 @@ var Events = function(Litbx, Core) {
 			$(window).on('keyup.litbx', function(event){
 				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
 				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
-				if (event.keyCode === 32) Core.Build.destroy(); // close
+				if (event.keyCode === 32 || event.keyCode === 27 ) Core.Build.destroy(); // close
 			});
 
 		}

@@ -94,7 +94,7 @@
   left: 0;
   right: 0;
   height: 50px;
-  background-color: grey;
+  background-color: #fff;
 }
 .litbx__title.outside {
   -webkit-transform: translateY(100%);

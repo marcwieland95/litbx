@@ -47,6 +47,8 @@ var Run = function(Litbx, Core) {
 		position,
 		item;
 
+		Litbx.builded = true; // set flag
+
 		// Set current index, when not set
 		if ( index === undefined ) {
 			//index = Litbx.current.index();
