@@ -86,19 +86,22 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.build = function() {
 
-		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
-		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+		if ( Litbx.options.arrows ) {
 
-		// Create arrow after inner-container
-		if ( Litbx.elements.length > 1 ) {
-			Core.Build.$inner.after( Litbx.options.tpl.prev );
-			Core.Build.$inner.after( Litbx.options.tpl.next );
+			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
+			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+
+			// Create arrow after inner-container
+			if ( Litbx.elements.length > 1 ) {
+				Core.Build.$inner.after( Litbx.options.tpl.prev );
+				Core.Build.$inner.after( Litbx.options.tpl.next );
+			}
+
+			//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
+
+		//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
+		//	this.items = this.wrapper.children();
 		}
-
-		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
-
-	//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
-	//	this.items = this.wrapper.children();
 
 	};
 
@@ -275,12 +278,19 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.keyboard = function() {
 
+		if ( Litbx.options.keyboard ) {
+
+			$(window).on('keyup.litbx', function( event ) {
+				if ( event.keyCode === 32 || event.keyCode === 27 ) Core.Build.destroy(); // close
+			});
+
+		}
+
 		if ( Litbx.options.keyboard && Litbx.elements.length > 1 ) {
 
-			$(window).on('keyup.litbx', function(event){
+			$(window).on('keyup.litbx', function( event ) {
 				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
 				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
-				if (event.keyCode === 32 || event.keyCode === 27 ) Core.Build.destroy(); // close
 			});
 
 		}
@@ -472,7 +482,17 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.current = function( shift ) {
 
-		switch( shift ) {
+		// not in use yet
+		if ( typeof shift !== 'undefined' ) {
+
+			// Extract move direction
+			this.direction = shift.substr(0, 1);
+			// Extract move steps - default: 1
+			this.steps = ( shift.substr(1) ) ? shift.substr(1) : 1;
+
+		}
+
+		switch( this.direction ) {
 			case '++':
 				if ( Core.Run.isEnd() ) {
 					return Litbx.elements.eq( 0 );
@@ -704,6 +724,9 @@ var Images = function(Litbx, Core) {
 
 			}
 
+			// Asign classes - css only
+			// build a css only solution - maybe asign some classes to img
+
 
 			// Keep aspect ratio
 			if ( Litbx.options.aspectRatio ) {
@@ -770,7 +793,6 @@ var Images = function(Litbx, Core) {
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
 
 			});
-
 
 		} else {
 
@@ -851,14 +873,15 @@ var Run = function(Litbx, Core) {
 		switch(direction) {
 
 			case '>':
-				if ( this.isEnd() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = 0;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isEnd() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isEnd() ) {
+
+					Litbx.current = 0;
 
 				} else {
 
@@ -868,14 +891,16 @@ var Run = function(Litbx, Core) {
 				break;
 
 			case '<':
-				if ( this.isStart() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = Litbx.groupLength - 1;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isStart() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isStart() ) {
+
+					Litbx.current = Litbx.groupLength - 1;
+
 
 				} else {
 
@@ -952,6 +977,7 @@ var Title = function(Litbx, Core) {
 
 		if ( Litbx.options.title ) {
 
+			// Grab title from attr
 			var currentTitle = Core.Helper.current().attr('title');
 
 			// Remove title when not set
@@ -961,20 +987,36 @@ var Title = function(Litbx, Core) {
 
 			}
 
+			// Add content and class to title
 			Core.Build.$title
 				.html( currentTitle )
 				.addClass( Litbx.options.titlePosition );
 
+			// Add some dynamic styles
+			if ( Litbx.options.helperStyle ) {
+
+				Core.Build.$title.css({
+					'margin-right': Litbx.options.padding[1],
+					'margin-left': Litbx.options.padding[3],
+					'line-height': Litbx.options.padding[0] + 'px'
+				});
+
+			}
 
 		}
 
+		/*
 		// Measure title height and add margin bottom - just on first run
-		if ( !Litbx.builded && Litbx.options.titlePosition === 'outside' ) {
+		//if ( !Litbx.builded && Litbx.options.titlePosition === 'outside' ) {
+		if ( Litbx.options.titlePosition === 'outside' ) {
 
 			var title_height = $( '.' + Litbx.options.classes.title ).height();
-			Litbx.options.margin[2] += title_height;
+			//Litbx.options.margin[2] += title_height;
+			//console.log( title_height );
 
+			//$( '.' + Litbx.options.classes.wrapper ).css( 'margin-bottom', title_height + 'px' )
 		}
+		*/
 
 	};
 
@@ -1022,7 +1064,7 @@ var Litbx = function ( elements, options, trigger ) {
 	var defaults = {
 		padding: 70,
 		margin: [30, 55, 30, 55], // 200
-		arrows: true,  // not in use
+		arrows: true,
 		closeBtn: true,  // not in use
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
@@ -1065,7 +1107,7 @@ var Litbx = function ( elements, options, trigger ) {
 
 		// Title
 		title: true,
-		titlePosition: 'outside', // inside, outside -> not implemented
+		titlePosition: 'inside', // inside, outside -> not implemented
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -1078,6 +1120,9 @@ var Litbx = function ( elements, options, trigger ) {
 			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
 			title: '<span class="litbx__title"></span>'
 		},
+
+		// Styling
+		helperStyle: true,
 
 		// Callbacks
 		beforeInit: function() {},

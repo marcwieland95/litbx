@@ -28,6 +28,9 @@ $white: rgb(255, 255, 255) !default;
 		justify-content: center;
 		align-items: center;
 
+		width: 80%;
+		height: auto;
+
 	}
 
 	&__inner {
@@ -90,17 +93,14 @@ $white: rgb(255, 255, 255) !default;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: 50px;
-		background-color: #fff;
+		//height: 50px;
 
 		&.inside {
-
+			//background-color: #fff;
 		}
 
 		&.outside {
-
 			transform: translateY(100%);
-
 		}
 	}
 

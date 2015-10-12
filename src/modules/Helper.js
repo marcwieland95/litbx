@@ -22,7 +22,17 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.current = function( shift ) {
 
-		switch( shift ) {
+		// not in use yet
+		if ( typeof shift !== 'undefined' ) {
+
+			// Extract move direction
+			this.direction = shift.substr(0, 1);
+			// Extract move steps - default: 1
+			this.steps = ( shift.substr(1) ) ? shift.substr(1) : 1;
+
+		}
+
+		switch( this.direction ) {
 			case '++':
 				if ( Core.Run.isEnd() ) {
 					return Litbx.elements.eq( 0 );

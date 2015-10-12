@@ -19,7 +19,7 @@ var Litbx = function ( elements, options, trigger ) {
 	var defaults = {
 		padding: 70,
 		margin: [30, 55, 30, 55], // 200
-		arrows: true,  // not in use
+		arrows: true,
 		closeBtn: true,  // not in use
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
@@ -62,7 +62,7 @@ var Litbx = function ( elements, options, trigger ) {
 
 		// Title
 		title: true,
-		titlePosition: 'outside', // inside, outside -> not implemented
+		titlePosition: 'inside', // inside, outside -> not implemented
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -75,6 +75,9 @@ var Litbx = function ( elements, options, trigger ) {
 			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
 			title: '<span class="litbx__title"></span>'
 		},
+
+		// Styling
+		helperStyle: true,
 
 		// Callbacks
 		beforeInit: function() {},

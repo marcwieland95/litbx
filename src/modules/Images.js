@@ -162,6 +162,9 @@ var Images = function(Litbx, Core) {
 
 			}
 
+			// Asign classes - css only
+			// build a css only solution - maybe asign some classes to img
+
 
 			// Keep aspect ratio
 			if ( Litbx.options.aspectRatio ) {
@@ -228,7 +231,6 @@ var Images = function(Litbx, Core) {
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
 
 			});
-
 
 		} else {
 

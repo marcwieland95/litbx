@@ -64,14 +64,15 @@ var Run = function(Litbx, Core) {
 		switch(direction) {
 
 			case '>':
-				if ( this.isEnd() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = 0;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isEnd() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isEnd() ) {
+
+					Litbx.current = 0;
 
 				} else {
 
@@ -81,14 +82,16 @@ var Run = function(Litbx, Core) {
 				break;
 
 			case '<':
-				if ( this.isStart() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = Litbx.groupLength - 1;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isStart() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isStart() ) {
+
+					Litbx.current = Litbx.groupLength - 1;
+
 
 				} else {
 
