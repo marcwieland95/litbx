@@ -474,10 +474,20 @@ var Helper = function(Litbx, Core) {
 
 		switch( shift ) {
 			case '++':
-				return Litbx.elements.eq( Litbx.current + 1 );
+				if ( Core.Run.isEnd() ) {
+					return Litbx.elements.eq( 0 );
+				} else {
+					return Litbx.elements.eq( Litbx.current + 1 );
+				}
+			break;
 
 			case '--':
-				return Litbx.elements.eq( Litbx.current - 1 );
+				if ( Core.Run.isStart() ) {
+					return Litbx.elements.eq( Litbx.groupLength - 1 );
+				} else {
+					return Litbx.elements.eq( Litbx.current - 1 );
+				}
+			break;
 
 			default:
 				return Litbx.elements.eq( Litbx.current );
@@ -577,7 +587,9 @@ var Images = function(Litbx, Core) {
 		}
 
 		// preload next/prev image
-		this.preload();
+		if ( Litbx.groupMode !== 'single' ) {
+			this.preload();
+		}
 
 		// image callback
 		return this.currentImage;
@@ -619,7 +631,7 @@ var Images = function(Litbx, Core) {
 	 */
 	Module.prototype.preload = function() {
 
-		if ( Litbx.options.preload ) {
+		if ( Litbx.options.preload && Litbx.groupMode !== 'single' ) {
 
 			var image_next,
 			image_prev;
@@ -1139,12 +1151,22 @@ Litbx.prototype.group = function() {
 		// Filter elements with group-attribute
 		this.elements = this.elements.filter( this.group );
 
+		// Set group flag
+		this.groupMode = 'multiple';
+
+		if ( this.group.length === 1 ) {
+			this.groupMode = 'single';
+		}
+
 		//this.trigger = this.trigger.filter( this.group );
 		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
 
 	} else {
 
 		this.elements = this.trigger;
+
+		// Set group flag
+		this.groupMode = 'single';
 
 	}
 
@@ -1209,7 +1231,7 @@ Litbx.prototype.setup = function() {
 
 $.fn.litbx = function ( options ) {
 
-	// todo: don't allow mulitple trigger on same element
+	// todo: don't allow multiple trigger on same element
 	// return this.each( function () {
 		if ( !$.data( this, 'litbx_api' ) ) {
 			var $trigger = this;

@@ -148,12 +148,22 @@ Litbx.prototype.group = function() {
 		// Filter elements with group-attribute
 		this.elements = this.elements.filter( this.group );
 
+		// Set group flag
+		this.groupMode = 'multiple';
+
+		if ( this.group.length === 1 ) {
+			this.groupMode = 'single';
+		}
+
 		//this.trigger = this.trigger.filter( this.group );
 		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
 
 	} else {
 
 		this.elements = this.trigger;
+
+		// Set group flag
+		this.groupMode = 'single';
 
 	}
 

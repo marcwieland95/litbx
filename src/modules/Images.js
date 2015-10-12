@@ -45,7 +45,9 @@ var Images = function(Litbx, Core) {
 		}
 
 		// preload next/prev image
-		this.preload();
+		if ( Litbx.groupMode !== 'single' ) {
+			this.preload();
+		}
 
 		// image callback
 		return this.currentImage;
@@ -87,7 +89,7 @@ var Images = function(Litbx, Core) {
 	 */
 	Module.prototype.preload = function() {
 
-		if ( Litbx.options.preload ) {
+		if ( Litbx.options.preload && Litbx.groupMode !== 'single' ) {
 
 			var image_next,
 			image_prev;

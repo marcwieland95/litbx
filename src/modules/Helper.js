@@ -24,10 +24,20 @@ var Helper = function(Litbx, Core) {
 
 		switch( shift ) {
 			case '++':
-				return Litbx.elements.eq( Litbx.current + 1 );
+				if ( Core.Run.isEnd() ) {
+					return Litbx.elements.eq( 0 );
+				} else {
+					return Litbx.elements.eq( Litbx.current + 1 );
+				}
+			break;
 
 			case '--':
-				return Litbx.elements.eq( Litbx.current - 1 );
+				if ( Core.Run.isStart() ) {
+					return Litbx.elements.eq( Litbx.groupLength - 1 );
+				} else {
+					return Litbx.elements.eq( Litbx.current - 1 );
+				}
+			break;
 
 			default:
 				return Litbx.elements.eq( Litbx.current );

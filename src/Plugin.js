@@ -6,7 +6,7 @@
 
 $.fn.litbx = function ( options ) {
 
-	// todo: don't allow mulitple trigger on same element
+	// todo: don't allow multiple trigger on same element
 	// return this.each( function () {
 		if ( !$.data( this, 'litbx_api' ) ) {
 			var $trigger = this;
