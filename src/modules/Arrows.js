@@ -23,6 +23,14 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.build = function() {
 
+		// Close
+		if ( Litbx.options.closeBtn ) {
+
+			Core.Build.$inner.after( Litbx.options.tpl.close );
+
+		}
+
+		// Arrows
 		if ( Litbx.options.arrows ) {
 
 			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );

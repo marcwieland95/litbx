@@ -86,6 +86,14 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.build = function() {
 
+		// Close
+		if ( Litbx.options.closeBtn ) {
+
+			Core.Build.$inner.after( Litbx.options.tpl.close );
+
+		}
+
+		// Arrows
 		if ( Litbx.options.arrows ) {
 
 			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
@@ -167,6 +175,9 @@ var Build = function(Litbx, Core) {
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
 		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
 
+		Core.Helper.lockScroll();
+
+
 		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
@@ -209,6 +220,8 @@ var Build = function(Litbx, Core) {
 
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
+
+		Core.Helper.unlockScroll();
 
 		// Clean up all binded events
 		Core.Events.unbind();
@@ -280,17 +293,33 @@ var Events = function(Litbx, Core) {
 
 		if ( Litbx.options.keyboard ) {
 
+			// close
 			$(window).on('keyup.litbx', function( event ) {
-				if ( event.keyCode === 32 || event.keyCode === 27 ) Core.Build.destroy(); // close
+				for (var i = 0; i < Litbx.options.closeKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.closeKey[i] ) Core.Build.destroy();
+				}
 			});
 
 		}
 
 		if ( Litbx.options.keyboard && Litbx.elements.length > 1 ) {
 
+			// next
 			$(window).on('keyup.litbx', function( event ) {
-				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
-				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
+
+				for (var i = 0; i < Litbx.options.nextKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.nextKey[i] ) Core.Run.switch( '>' );
+				}
+
+			});
+
+			// prev
+			$(window).on('keyup.litbx', function( event ) {
+
+				for (var i = 0; i < Litbx.options.prevKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.prevKey[i] ) Core.Run.switch( '<' );
+				}
+
 			});
 
 		}
@@ -362,12 +391,16 @@ var Events = function(Litbx, Core) {
 		$('.' + Litbx.options.classes.overlay ).on( 'click.litbx' , function() {
 			Core.Build.destroy();
 		})
+			// Handle click in image
+			.children().on( 'click.litbx', function() {
+				if ( !Litbx.options.closeClick ) {
+					return false;
+				}
+			});
 
-		// Handle click in image
-		.children().on( 'click.litbx', function() {
-			if ( !Litbx.options.closeClick ) {
-				return false;
-			}
+		// Close btn
+		$('.' + Litbx.options.classes.close ).on( 'click.litbx' , function() {
+			Core.Build.destroy();
 		});
 
 	};
@@ -492,7 +525,7 @@ var Helper = function(Litbx, Core) {
 
 		}
 
-		switch( this.direction ) {
+		switch( shift ) {
 			case '++':
 				if ( Core.Run.isEnd() ) {
 					return Litbx.elements.eq( 0 );
@@ -555,6 +588,64 @@ var Helper = function(Litbx, Core) {
 	};
 
 
+	/**
+	 * Scroll Lock
+	 *
+	 * Improve code by this snippet: https://gist.github.com/barneycarroll/6550066
+	 */
+
+	// Lock scroll
+	Module.prototype.lockScroll = function() {
+
+		this.$html = $( 'html' );
+
+		// Store current scroll position
+		this.prevScroll = $( window ).scrollTop();
+
+		// Store current css properties
+		/*
+		this.prevStyles = {
+			'position': this.$html.css('position'),
+			'overflowy': this.$html.css('overflow-y')
+		};
+		*/
+
+		// Prevent scroll by css
+		$( this.$html )
+			.addClass( Litbx.options.classes.locked )
+			.css({
+				'top': - this.prevScroll + 'px',
+				'position': 'fixed',
+				'overflow-y': 'scroll'
+			});
+
+		Litbx.locked = true;
+	};
+
+	// Unlock scroll
+	Module.prototype.unlockScroll = function() {
+
+		if ( Litbx.locked ) {
+
+			// Reset all properties
+			$( this.$html )
+				.removeClass( Litbx.options.classes.locked )
+				.css({
+					//'position': this.prevStyles.position,
+					//'overflow-y': this.prevStyles.overflowy,
+					'position': '',
+					'overflow-y': '',
+					'top': ''
+				});
+
+			$( window ).scrollTop( this.prevScroll );
+
+			Litbx.locked = false;
+
+		}
+	};
+
+
 	// @return Module
 	return new Module();
 
@@ -607,9 +698,7 @@ var Images = function(Litbx, Core) {
 		}
 
 		// preload next/prev image
-		if ( Litbx.groupMode !== 'single' ) {
-			this.preload();
-		}
+		this.preload();
 
 		// image callback
 		return this.currentImage;
@@ -1065,7 +1154,7 @@ var Litbx = function ( elements, options, trigger ) {
 		padding: 70,
 		margin: [30, 55, 30, 55], // 200
 		arrows: true,
-		closeBtn: true,  // not in use
+		closeBtn: true,
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
 
@@ -1085,9 +1174,9 @@ var Litbx = function ( elements, options, trigger ) {
 		// preloadNumber - int or array (forward, backward)
 		loop: true,
 		keyboard: true,
-		// nextKeyCode
-		// prevKeyCode
-		// closeKeyCode
+		closeKey: [32, 27],
+		nextKey: [39],
+		prevKey: [37],
 		throttle: 16,
 
 		// Classes
@@ -1100,8 +1189,10 @@ var Litbx = function ( elements, options, trigger ) {
 			arrow: 'litbx__arrow',
 			arrowNext: 'litbx__arrow--next',
 			arrowPrev: 'litbx__arrow--prev',
+			close: 'litbx__close',
 			current: 'current',
 			loading: 'loading',
+			locked: 'locked',
 			title: 'litbx__title',
 		},
 
@@ -1116,6 +1207,7 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
+			close: '<span title="Close" class="litbx__close">x</span>',
 			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
 			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
 			title: '<span class="litbx__title"></span>'
@@ -1147,6 +1239,7 @@ var Litbx = function ( elements, options, trigger ) {
 	this.setup();
 
 	this.builded = false; // set flag for first load
+	this.locked = false;
 
 	// Call before init callback
 	this.options.beforeInit();

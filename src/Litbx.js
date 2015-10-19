@@ -20,7 +20,7 @@ var Litbx = function ( elements, options, trigger ) {
 		padding: 70,
 		margin: [30, 55, 30, 55], // 200
 		arrows: true,
-		closeBtn: true,  // not in use
+		closeBtn: true,
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
 
@@ -40,9 +40,9 @@ var Litbx = function ( elements, options, trigger ) {
 		// preloadNumber - int or array (forward, backward)
 		loop: true,
 		keyboard: true,
-		// nextKeyCode
-		// prevKeyCode
-		// closeKeyCode
+		closeKey: [32, 27],
+		nextKey: [39],
+		prevKey: [37],
 		throttle: 16,
 
 		// Classes
@@ -55,8 +55,10 @@ var Litbx = function ( elements, options, trigger ) {
 			arrow: 'litbx__arrow',
 			arrowNext: 'litbx__arrow--next',
 			arrowPrev: 'litbx__arrow--prev',
+			close: 'litbx__close',
 			current: 'current',
 			loading: 'loading',
+			locked: 'locked',
 			title: 'litbx__title',
 		},
 
@@ -71,6 +73,7 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
+			close: '<span title="Close" class="litbx__close">x</span>',
 			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
 			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
 			title: '<span class="litbx__title"></span>'
@@ -102,6 +105,7 @@ var Litbx = function ( elements, options, trigger ) {
 	this.setup();
 
 	this.builded = false; // set flag for first load
+	this.locked = false;
 
 	// Call before init callback
 	this.options.beforeInit();

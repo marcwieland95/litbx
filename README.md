@@ -8,7 +8,10 @@
 In progress
 
 ##ToDo
-- Reduce JS in calculation function - achieve more trought css
+- Reduce JS in calculation function (improve) - achieve more trought css (flexbox)
+- Improve margin/padding handling
+- Rewritte title functions
+- Don't hardcode arrow and close sizes inside css (height and width)
 
 ##Building
 Build using Grunt and Bower. The following tasks are available:
@@ -21,6 +24,13 @@ Build using Grunt and Bower. The following tasks are available:
 See [Trello-Board](https://trello.com/b/kjfwYtGe/litbx) to check future feature and current work state.
 
 ##Changelog
+### Beta 2 (Sprint 2) - 19.10.2015
+* Keyboard (2)
+* Arrow-Handling (4)
+* Preload (3)
+* Divide into galleries (data-attr) (2)
+* Overlay (stop scroll, color) (2)
+
 ### Beta 1 (Sprint 1) - 06.09.2015
 * Bootstrap (3)
 * Grunt, Bower and Travis (1)

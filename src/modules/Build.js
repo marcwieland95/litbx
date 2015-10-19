@@ -43,6 +43,9 @@ var Build = function(Litbx, Core) {
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
 		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
 
+		Core.Helper.lockScroll();
+
+
 		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
@@ -85,6 +88,8 @@ var Build = function(Litbx, Core) {
 
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
+
+		Core.Helper.unlockScroll();
 
 		// Clean up all binded events
 		Core.Events.unbind();

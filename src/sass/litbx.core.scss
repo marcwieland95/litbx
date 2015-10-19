@@ -85,6 +85,25 @@ $white: rgb(255, 255, 255) !default;
 
 
 	/*
+		Close
+	 */
+
+	&__close {
+
+		position: absolute;
+		cursor: pointer;
+		top: 0;
+		right: 0;
+		width: 70px;
+		height: 70px;
+		text-align: center;
+		line-height: 70px;
+
+	}
+
+
+
+	/*
 		Title
 	 */
 

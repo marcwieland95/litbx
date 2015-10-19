@@ -32,7 +32,7 @@ var Helper = function(Litbx, Core) {
 
 		}
 
-		switch( this.direction ) {
+		switch( shift ) {
 			case '++':
 				if ( Core.Run.isEnd() ) {
 					return Litbx.elements.eq( 0 );
@@ -92,6 +92,64 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.now = Date.now || function() {
 		return new Date().getTime();
+	};
+
+
+	/**
+	 * Scroll Lock
+	 *
+	 * Improve code by this snippet: https://gist.github.com/barneycarroll/6550066
+	 */
+
+	// Lock scroll
+	Module.prototype.lockScroll = function() {
+
+		this.$html = $( 'html' );
+
+		// Store current scroll position
+		this.prevScroll = $( window ).scrollTop();
+
+		// Store current css properties
+		/*
+		this.prevStyles = {
+			'position': this.$html.css('position'),
+			'overflowy': this.$html.css('overflow-y')
+		};
+		*/
+
+		// Prevent scroll by css
+		$( this.$html )
+			.addClass( Litbx.options.classes.locked )
+			.css({
+				'top': - this.prevScroll + 'px',
+				'position': 'fixed',
+				'overflow-y': 'scroll'
+			});
+
+		Litbx.locked = true;
+	};
+
+	// Unlock scroll
+	Module.prototype.unlockScroll = function() {
+
+		if ( Litbx.locked ) {
+
+			// Reset all properties
+			$( this.$html )
+				.removeClass( Litbx.options.classes.locked )
+				.css({
+					//'position': this.prevStyles.position,
+					//'overflow-y': this.prevStyles.overflowy,
+					'position': '',
+					'overflow-y': '',
+					'top': ''
+				});
+
+			$( window ).scrollTop( this.prevScroll );
+
+			Litbx.locked = false;
+
+		}
 	};
 
 

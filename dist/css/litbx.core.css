@@ -3,6 +3,9 @@
 		Arrow
 	 */
   /*
+		Close
+	 */
+  /*
 		Title
 	 */
   /*
@@ -89,6 +92,16 @@
 }
 .litbx__arrow--next {
   right: 0;
+}
+.litbx__close {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 70px;
+  text-align: center;
+  line-height: 70px;
 }
 .litbx__title {
   position: absolute;

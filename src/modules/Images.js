@@ -45,9 +45,7 @@ var Images = function(Litbx, Core) {
 		}
 
 		// preload next/prev image
-		if ( Litbx.groupMode !== 'single' ) {
-			this.preload();
-		}
+		this.preload();
 
 		// image callback
 		return this.currentImage;
