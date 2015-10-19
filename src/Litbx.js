@@ -19,8 +19,8 @@ var Litbx = function ( elements, options, trigger ) {
 	var defaults = {
 		padding: 70,
 		margin: [30, 55, 30, 55], // 200
-		arrows: true,  // not in use
-		closeBtn: true,  // not in use
+		arrows: true,
+		closeBtn: true,
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
 
@@ -40,9 +40,9 @@ var Litbx = function ( elements, options, trigger ) {
 		// preloadNumber - int or array (forward, backward)
 		loop: true,
 		keyboard: true,
-		// nextKeyCode
-		// prevKeyCode
-		// closeKeyCode
+		closeKey: [32, 27],
+		nextKey: [39],
+		prevKey: [37],
 		throttle: 16,
 
 		// Classes
@@ -55,9 +55,16 @@ var Litbx = function ( elements, options, trigger ) {
 			arrow: 'litbx__arrow',
 			arrowNext: 'litbx__arrow--next',
 			arrowPrev: 'litbx__arrow--prev',
+			close: 'litbx__close',
 			current: 'current',
 			loading: 'loading',
+			locked: 'locked',
+			title: 'litbx__title',
 		},
+
+		// Title
+		title: true,
+		titlePosition: 'inside', // inside, outside -> not implemented
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -66,9 +73,14 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
+			close: '<span title="Close" class="litbx__close">x</span>',
 			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
-			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>'
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
+			title: '<span class="litbx__title"></span>'
 		},
+
+		// Styling
+		helperStyle: true,
 
 		// Callbacks
 		beforeInit: function() {},
@@ -93,6 +105,7 @@ var Litbx = function ( elements, options, trigger ) {
 	this.setup();
 
 	this.builded = false; // set flag for first load
+	this.locked = false;
 
 	// Call before init callback
 	this.options.beforeInit();
@@ -108,6 +121,7 @@ var Litbx = function ( elements, options, trigger ) {
 		Animation: Animation,
 		Build: Build,
 		Arrows: Arrows,
+		Title: Title,
 		Events: Events,
 		Touch: Touch,
 		Api: Api
@@ -141,12 +155,22 @@ Litbx.prototype.group = function() {
 		// Filter elements with group-attribute
 		this.elements = this.elements.filter( this.group );
 
+		// Set group flag
+		this.groupMode = 'multiple';
+
+		if ( this.group.length === 1 ) {
+			this.groupMode = 'single';
+		}
+
 		//this.trigger = this.trigger.filter( this.group );
 		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
 
 	} else {
 
 		this.elements = this.trigger;
+
+		// Set group flag
+		this.groupMode = 'single';
 
 	}
 
@@ -161,12 +185,17 @@ Litbx.prototype.collect = function() {
 
 	// Set current
 	if (this.options.startAt) { // falsy value -> 0 or false
+
 		this.currentIndex = parseInt( this.options.startAt - 1 );
+
 	} else {
+
 		// false: start on trigger image
 		//this.currentIndex = this.trigger.index();
 		this.currentIndex = this.trigger.index( '[data-group="' + this.groupAttr + '"]' ); // get index relative to group
+
 	}
+
 	this.current = this.currentIndex;
 	//console.log(this.current);
 
@@ -186,12 +215,16 @@ Litbx.prototype.setup = function() {
 
 	// Prepare margin option
 	if ( typeof this.options.margin === 'number' ) {
+
 		this.options.margin = [this.options.margin, this.options.margin, this.options.margin, this.options.margin];
+
 	}
 
 	// Prepare padding option
 	if ( typeof this.options.padding === 'number' ) {
+
 		this.options.padding = [this.options.padding, this.options.padding, this.options.padding, this.options.padding];
+
 	}
 
 };

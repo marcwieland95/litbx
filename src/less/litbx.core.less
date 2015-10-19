@@ -28,6 +28,9 @@
 		justify-content: center;
 		align-items: center;
 
+		width: 80%;
+		height: auto;
+
 	}
 
 	&__inner {
@@ -79,6 +82,47 @@
 
 
 	}
+
+
+	/*
+		Close
+	 */
+
+	&__close {
+
+		position: absolute;
+		cursor: pointer;
+		top: 0;
+		right: 0;
+		width: 70px;
+		height: 70px;
+		text-align: center;
+		line-height: 70px;
+
+	}
+
+
+
+	/*
+		Title
+	 */
+
+	&__title {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		//height: 50px;
+
+		&.inside {
+			//background-color: #fff;
+		}
+
+		&.outside {
+			transform: translateY(100%);
+		}
+	}
+
 
 
 	/*

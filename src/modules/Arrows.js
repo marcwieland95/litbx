@@ -23,19 +23,30 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.build = function() {
 
-		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
-		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+		// Close
+		if ( Litbx.options.closeBtn ) {
 
-		// Create arrow after inner-container
-		if ( Litbx.elements.length > 1 ) {
-			Core.Build.$inner.after( Litbx.options.tpl.prev );
-			Core.Build.$inner.after( Litbx.options.tpl.next );
+			Core.Build.$inner.after( Litbx.options.tpl.close );
+
 		}
 
-		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
+		// Arrows
+		if ( Litbx.options.arrows ) {
 
-	//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
-	//	this.items = this.wrapper.children();
+			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
+			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+
+			// Create arrow after inner-container
+			if ( Litbx.elements.length > 1 ) {
+				Core.Build.$inner.after( Litbx.options.tpl.prev );
+				Core.Build.$inner.after( Litbx.options.tpl.next );
+			}
+
+			//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
+
+		//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
+		//	this.items = this.wrapper.children();
+		}
 
 	};
 

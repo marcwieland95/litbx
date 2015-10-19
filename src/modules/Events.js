@@ -26,12 +26,35 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.keyboard = function() {
 
+		if ( Litbx.options.keyboard ) {
+
+			// close
+			$(window).on('keyup.litbx', function( event ) {
+				for (var i = 0; i < Litbx.options.closeKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.closeKey[i] ) Core.Build.destroy();
+				}
+			});
+
+		}
+
 		if ( Litbx.options.keyboard && Litbx.elements.length > 1 ) {
 
-			$(window).on('keyup.litbx', function(event){
-				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
-				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
-				if (event.keyCode === 32) Core.Build.destroy(); // close
+			// next
+			$(window).on('keyup.litbx', function( event ) {
+
+				for (var i = 0; i < Litbx.options.nextKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.nextKey[i] ) Core.Run.switch( '>' );
+				}
+
+			});
+
+			// prev
+			$(window).on('keyup.litbx', function( event ) {
+
+				for (var i = 0; i < Litbx.options.prevKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.prevKey[i] ) Core.Run.switch( '<' );
+				}
+
 			});
 
 		}
@@ -103,12 +126,16 @@ var Events = function(Litbx, Core) {
 		$('.' + Litbx.options.classes.overlay ).on( 'click.litbx' , function() {
 			Core.Build.destroy();
 		})
+			// Handle click in image
+			.children().on( 'click.litbx', function() {
+				if ( !Litbx.options.closeClick ) {
+					return false;
+				}
+			});
 
-		// Handle click in image
-		.children().on( 'click.litbx', function() {
-			if ( !Litbx.options.closeClick ) {
-				return false;
-			}
+		// Close btn
+		$('.' + Litbx.options.classes.close ).on( 'click.litbx' , function() {
+			Core.Build.destroy();
 		});
 
 	};

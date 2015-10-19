@@ -86,19 +86,30 @@ var Arrows = function(Litbx, Core) {
 	 */
 	Module.prototype.build = function() {
 
-		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
-		//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+		// Close
+		if ( Litbx.options.closeBtn ) {
 
-		// Create arrow after inner-container
-		if ( Litbx.elements.length > 1 ) {
-			Core.Build.$inner.after( Litbx.options.tpl.prev );
-			Core.Build.$inner.after( Litbx.options.tpl.next );
+			Core.Build.$inner.after( Litbx.options.tpl.close );
+
 		}
 
-		//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
+		// Arrows
+		if ( Litbx.options.arrows ) {
 
-	//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
-	//	this.items = this.wrapper.children();
+			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.prev );
+			//$( '.' + Litbx.options.classes.inner ).append( Litbx.options.tpl.next );
+
+			// Create arrow after inner-container
+			if ( Litbx.elements.length > 1 ) {
+				Core.Build.$inner.after( Litbx.options.tpl.prev );
+				Core.Build.$inner.after( Litbx.options.tpl.next );
+			}
+
+			//$( '.' + Litbx.options.classes.inner ).append( '<span class="' + Litbx.options.classes.arrow + ' ' + Litbx.options.classes.arrowNext + '"></span>' );
+
+		//	this.wrapper = Litbx.slider.find('.' + Glide.options.classes.arrows);
+		//	this.items = this.wrapper.children();
+		}
 
 	};
 
@@ -164,9 +175,17 @@ var Build = function(Litbx, Core) {
 		//$( 'body' ).append( Litbx.options.tpl.wrap );
 		//$( Litbx.options.tpl.wrap ).appendTo( 'body' ).after( '<div class="' + Litbx.options.classes.inner + '"></div>' );
 
+		Core.Helper.lockScroll();
+
+
 		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
+
+		// Build markup for title
+		if ( Litbx.options.title ) {
+			this.$title = $( Litbx.options.tpl.title ).appendTo( this.$wrap );
+		}
 
 		//console.log( $outer );
 
@@ -201,6 +220,8 @@ var Build = function(Litbx, Core) {
 
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
+
+		Core.Helper.unlockScroll();
 
 		// Clean up all binded events
 		Core.Events.unbind();
@@ -270,12 +291,35 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.keyboard = function() {
 
+		if ( Litbx.options.keyboard ) {
+
+			// close
+			$(window).on('keyup.litbx', function( event ) {
+				for (var i = 0; i < Litbx.options.closeKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.closeKey[i] ) Core.Build.destroy();
+				}
+			});
+
+		}
+
 		if ( Litbx.options.keyboard && Litbx.elements.length > 1 ) {
 
-			$(window).on('keyup.litbx', function(event){
-				if (event.keyCode === 39) Core.Run.switch( '>' ); // next
-				if (event.keyCode === 37) Core.Run.switch( '<' ); // prev
-				if (event.keyCode === 32) Core.Build.destroy(); // close
+			// next
+			$(window).on('keyup.litbx', function( event ) {
+
+				for (var i = 0; i < Litbx.options.nextKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.nextKey[i] ) Core.Run.switch( '>' );
+				}
+
+			});
+
+			// prev
+			$(window).on('keyup.litbx', function( event ) {
+
+				for (var i = 0; i < Litbx.options.prevKey.length; i++) {
+				    if ( event.keyCode === Litbx.options.prevKey[i] ) Core.Run.switch( '<' );
+				}
+
 			});
 
 		}
@@ -347,12 +391,16 @@ var Events = function(Litbx, Core) {
 		$('.' + Litbx.options.classes.overlay ).on( 'click.litbx' , function() {
 			Core.Build.destroy();
 		})
+			// Handle click in image
+			.children().on( 'click.litbx', function() {
+				if ( !Litbx.options.closeClick ) {
+					return false;
+				}
+			});
 
-		// Handle click in image
-		.children().on( 'click.litbx', function() {
-			if ( !Litbx.options.closeClick ) {
-				return false;
-			}
+		// Close btn
+		$('.' + Litbx.options.classes.close ).on( 'click.litbx' , function() {
+			Core.Build.destroy();
 		});
 
 	};
@@ -467,18 +515,39 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.current = function( shift ) {
 
+		// not in use yet
+		if ( typeof shift !== 'undefined' ) {
+
+			// Extract move direction
+			this.direction = shift.substr(0, 1);
+			// Extract move steps - default: 1
+			this.steps = ( shift.substr(1) ) ? shift.substr(1) : 1;
+
+		}
+
 		switch( shift ) {
 			case '++':
-				return Litbx.elements.eq( Litbx.current + 1 );
+				if ( Core.Run.isEnd() ) {
+					return Litbx.elements.eq( 0 );
+				} else {
+					return Litbx.elements.eq( Litbx.current + 1 );
+				}
+			break;
 
 			case '--':
-				return Litbx.elements.eq( Litbx.current - 1 );
+				if ( Core.Run.isStart() ) {
+					return Litbx.elements.eq( Litbx.groupLength - 1 );
+				} else {
+					return Litbx.elements.eq( Litbx.current - 1 );
+				}
+			break;
 
 			default:
 				return Litbx.elements.eq( Litbx.current );
 		}
 
 	};
+
 
 	/**
 	 * Add proper unit to value
@@ -516,6 +585,64 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.now = Date.now || function() {
 		return new Date().getTime();
+	};
+
+
+	/**
+	 * Scroll Lock
+	 *
+	 * Improve code by this snippet: https://gist.github.com/barneycarroll/6550066
+	 */
+
+	// Lock scroll
+	Module.prototype.lockScroll = function() {
+
+		this.$html = $( 'html' );
+
+		// Store current scroll position
+		this.prevScroll = $( window ).scrollTop();
+
+		// Store current css properties
+		/*
+		this.prevStyles = {
+			'position': this.$html.css('position'),
+			'overflowy': this.$html.css('overflow-y')
+		};
+		*/
+
+		// Prevent scroll by css
+		$( this.$html )
+			.addClass( Litbx.options.classes.locked )
+			.css({
+				'top': - this.prevScroll + 'px',
+				'position': 'fixed',
+				'overflow-y': 'scroll'
+			});
+
+		Litbx.locked = true;
+	};
+
+	// Unlock scroll
+	Module.prototype.unlockScroll = function() {
+
+		if ( Litbx.locked ) {
+
+			// Reset all properties
+			$( this.$html )
+				.removeClass( Litbx.options.classes.locked )
+				.css({
+					//'position': this.prevStyles.position,
+					//'overflow-y': this.prevStyles.overflowy,
+					'position': '',
+					'overflow-y': '',
+					'top': ''
+				});
+
+			$( window ).scrollTop( this.prevScroll );
+
+			Litbx.locked = false;
+
+		}
 	};
 
 
@@ -559,12 +686,15 @@ var Images = function(Litbx, Core) {
 
 		// Check if gallery has already loaded
 		if ( Litbx.builded ) {
+
 			// replace inner content
 			Core.Build.$inner.find('img').replaceWith( this.currentImage );
+
 		} else {
+
 			// create inner content
 			$( '.' + Litbx.options.classes.inner ).append( this.currentImage ).find('img:last').addClass( Litbx.options.classes.item );
-			Litbx.builded = true; // set flag
+
 		}
 
 		// preload next/prev image
@@ -593,11 +723,13 @@ var Images = function(Litbx, Core) {
 			$('.litbx__wrapper').fadeIn();
 
 		}).each(function() {
+
 			// Hide wrapper
 			$('.litbx__wrapper').hide();
 
 			// Add loading class to overlay
 			$('.' + Litbx.options.classes.overlay ).addClass( 'loading' );
+
 		});
 
 	};
@@ -608,7 +740,7 @@ var Images = function(Litbx, Core) {
 	 */
 	Module.prototype.preload = function() {
 
-		if ( Litbx.options.preload ) {
+		if ( Litbx.options.preload && Litbx.groupMode !== 'single' ) {
 
 			var image_next,
 			image_prev;
@@ -660,18 +792,29 @@ var Images = function(Litbx, Core) {
 			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
 			if ( width < maxViewWidth ) {
+
 				canExpandWidth = true;
+
 			} else {
+
 				canExpandWidth = false;
+
 			}
 
 			// set flag for height - not in use
 			//if ( (margin + padding + height ) < Litbx.browserHeight ) {
 			if ( height < maxViewHeight ) {
+
 				canExpandHeight = true;
+
 			} else {
+
 				canExpandHeight = false;
+
 			}
+
+			// Asign classes - css only
+			// build a css only solution - maybe asign some classes to img
 
 
 			// Keep aspect ratio
@@ -699,6 +842,7 @@ var Images = function(Litbx, Core) {
 						width = maxViewWidth;
 						height = width / ratio;
 					}
+
 				}
 
 			} else {
@@ -719,22 +863,25 @@ var Images = function(Litbx, Core) {
 
 			//Core.Build.$wrap.css({ // undefined ??
 			$( '.' + Litbx.options.classes.wrapper ).css({
+
 				//'padding': 200,
 				//'margin': Litbx.options.margin.toString(),
 				'width': width, // width
 				'height': height, // height
 				'max-width': maxWidth,
 				'max-height': maxHeight
+
 			});
 
 			// set padding and margin
 			$.each( ["top", "right", "bottom", "left"], function( i, direction ) {
+
 				var $wrapper = $( '.' + Litbx.options.classes.wrapper );
 
-				$wrapper.css( 'margin-' + direction, Core.Helper.getValue(margin[ i ] ) );
+				$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
-			});
 
+			});
 
 		} else {
 
@@ -798,6 +945,8 @@ var Run = function(Litbx, Core) {
 		position,
 		item;
 
+		Litbx.builded = true; // set flag
+
 		// Set current index, when not set
 		if ( index === undefined ) {
 			//index = Litbx.current.index();
@@ -813,38 +962,47 @@ var Run = function(Litbx, Core) {
 		switch(direction) {
 
 			case '>':
-				if ( this.isEnd() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = 0;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isEnd() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isEnd() ) {
+
+					Litbx.current = 0;
 
 				} else {
+
 					Litbx.current = index + 1;
+
 				}
 				break;
 
 			case '<':
-				if ( this.isStart() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = Litbx.groupLength - 1;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isStart() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isStart() ) {
+
+					Litbx.current = Litbx.groupLength - 1;
+
 
 				} else {
+
 					Litbx.current = index - 1;
+
 				}
 				break;
 
 			case '=':
+
 				Litbx.current = index;
 				break;
+
 		}
 
 	/*
@@ -858,6 +1016,8 @@ var Run = function(Litbx, Core) {
 		//Core.Images.calculate();
 
 		Core.Images.load();
+
+		Core.Title.build();
 
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
@@ -882,6 +1042,77 @@ var Run = function(Litbx, Core) {
 
 };
 ;/**
+ * --------------------------------
+ * Litbx Title
+ * --------------------------------
+ * Title handling
+ * @return {Litbx.Title}
+ */
+
+var Title = function(Litbx, Core) {
+
+	/**
+	 * Image Module Constructor
+	 */
+	function Module() {
+		this.build();
+	}
+
+
+	/**
+	 * Build title
+	 */
+	Module.prototype.build = function() {
+
+		if ( Litbx.options.title ) {
+
+			// Grab title from attr
+			var currentTitle = Core.Helper.current().attr('title');
+
+			// Remove title when not set
+			if ( typeof currentTitle === 'undefined' ) {
+
+				currentTitle = '';
+
+			}
+
+			// Add content and class to title
+			Core.Build.$title
+				.html( currentTitle )
+				.addClass( Litbx.options.titlePosition );
+
+			// Add some dynamic styles
+			if ( Litbx.options.helperStyle ) {
+
+				Core.Build.$title.css({
+					'margin-right': Litbx.options.padding[1],
+					'margin-left': Litbx.options.padding[3],
+					'line-height': Litbx.options.padding[0] + 'px'
+				});
+
+			}
+
+		}
+
+		/*
+		// Measure title height and add margin bottom - just on first run
+		//if ( !Litbx.builded && Litbx.options.titlePosition === 'outside' ) {
+		if ( Litbx.options.titlePosition === 'outside' ) {
+
+			var title_height = $( '.' + Litbx.options.classes.title ).height();
+			//Litbx.options.margin[2] += title_height;
+			//console.log( title_height );
+
+			//$( '.' + Litbx.options.classes.wrapper ).css( 'margin-bottom', title_height + 'px' )
+		}
+		*/
+
+	};
+
+	// @return Module
+	return new Module();
+
+};;/**
  * --------------------------------
  * Litbx Touch
  * --------------------------------
@@ -922,8 +1153,8 @@ var Litbx = function ( elements, options, trigger ) {
 	var defaults = {
 		padding: 70,
 		margin: [30, 55, 30, 55], // 200
-		arrows: true,  // not in use
-		closeBtn: true,  // not in use
+		arrows: true,
+		closeBtn: true,
 		startAt: 0, // int - index starts at 1, 0 or false = open at trigger
 		flexbox: false, // not in use
 
@@ -943,9 +1174,9 @@ var Litbx = function ( elements, options, trigger ) {
 		// preloadNumber - int or array (forward, backward)
 		loop: true,
 		keyboard: true,
-		// nextKeyCode
-		// prevKeyCode
-		// closeKeyCode
+		closeKey: [32, 27],
+		nextKey: [39],
+		prevKey: [37],
 		throttle: 16,
 
 		// Classes
@@ -958,9 +1189,16 @@ var Litbx = function ( elements, options, trigger ) {
 			arrow: 'litbx__arrow',
 			arrowNext: 'litbx__arrow--next',
 			arrowPrev: 'litbx__arrow--prev',
+			close: 'litbx__close',
 			current: 'current',
 			loading: 'loading',
+			locked: 'locked',
+			title: 'litbx__title',
 		},
+
+		// Title
+		title: true,
+		titlePosition: 'inside', // inside, outside -> not implemented
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -969,9 +1207,14 @@ var Litbx = function ( elements, options, trigger ) {
 			inner: '<div class="litbx__inner"></div>',
 			//error    : '<p class="fancybox-error">{{ERROR}}</p>',
 			//closeBtn : '<a title="{{CLOSE}}" class="fancybox-close" href="javascript:;"></a>',
+			close: '<span title="Close" class="litbx__close">x</span>',
 			next: '<span class="litbx__arrow litbx__arrow--prev"><i class="prev">&larr;</i></span>',
-			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>'
+			prev: '<span class="litbx__arrow litbx__arrow--next"><i class="next">&rarr;</i></span>',
+			title: '<span class="litbx__title"></span>'
 		},
+
+		// Styling
+		helperStyle: true,
 
 		// Callbacks
 		beforeInit: function() {},
@@ -996,6 +1239,7 @@ var Litbx = function ( elements, options, trigger ) {
 	this.setup();
 
 	this.builded = false; // set flag for first load
+	this.locked = false;
 
 	// Call before init callback
 	this.options.beforeInit();
@@ -1011,6 +1255,7 @@ var Litbx = function ( elements, options, trigger ) {
 		Animation: Animation,
 		Build: Build,
 		Arrows: Arrows,
+		Title: Title,
 		Events: Events,
 		Touch: Touch,
 		Api: Api
@@ -1044,12 +1289,22 @@ Litbx.prototype.group = function() {
 		// Filter elements with group-attribute
 		this.elements = this.elements.filter( this.group );
 
+		// Set group flag
+		this.groupMode = 'multiple';
+
+		if ( this.group.length === 1 ) {
+			this.groupMode = 'single';
+		}
+
 		//this.trigger = this.trigger.filter( this.group );
 		//console.log( this.trigger.index( '[data-group="' + this.groupAttr + '"]' ) );
 
 	} else {
 
 		this.elements = this.trigger;
+
+		// Set group flag
+		this.groupMode = 'single';
 
 	}
 
@@ -1064,12 +1319,17 @@ Litbx.prototype.collect = function() {
 
 	// Set current
 	if (this.options.startAt) { // falsy value -> 0 or false
+
 		this.currentIndex = parseInt( this.options.startAt - 1 );
+
 	} else {
+
 		// false: start on trigger image
 		//this.currentIndex = this.trigger.index();
 		this.currentIndex = this.trigger.index( '[data-group="' + this.groupAttr + '"]' ); // get index relative to group
+
 	}
+
 	this.current = this.currentIndex;
 	//console.log(this.current);
 
@@ -1089,12 +1349,16 @@ Litbx.prototype.setup = function() {
 
 	// Prepare margin option
 	if ( typeof this.options.margin === 'number' ) {
+
 		this.options.margin = [this.options.margin, this.options.margin, this.options.margin, this.options.margin];
+
 	}
 
 	// Prepare padding option
 	if ( typeof this.options.padding === 'number' ) {
+
 		this.options.padding = [this.options.padding, this.options.padding, this.options.padding, this.options.padding];
+
 	}
 
 };;/**
@@ -1105,7 +1369,7 @@ Litbx.prototype.setup = function() {
 
 $.fn.litbx = function ( options ) {
 
-	// todo: don't allow mulitple trigger on same element
+	// todo: don't allow multiple trigger on same element
 	// return this.each( function () {
 		if ( !$.data( this, 'litbx_api' ) ) {
 			var $trigger = this;

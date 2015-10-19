@@ -3,6 +3,12 @@
 		Arrow
 	 */
   /*
+		Close
+	 */
+  /*
+		Title
+	 */
+  /*
 		Loading
 	 */
 }
@@ -42,6 +48,8 @@
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+  width: 80%;
+  height: auto;
 }
 .litbx__inner {
   width: 100%;
@@ -84,6 +92,27 @@
 }
 .litbx__arrow--next {
   right: 0;
+}
+.litbx__close {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 70px;
+  text-align: center;
+  line-height: 70px;
+}
+.litbx__title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.litbx__title.outside {
+  -webkit-transform: translateY(100%);
+      -ms-transform: translateY(100%);
+          transform: translateY(100%);
 }
 .litbx__overlay.loading::after {
   content: "";

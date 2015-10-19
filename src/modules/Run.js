@@ -47,6 +47,8 @@ var Run = function(Litbx, Core) {
 		position,
 		item;
 
+		Litbx.builded = true; // set flag
+
 		// Set current index, when not set
 		if ( index === undefined ) {
 			//index = Litbx.current.index();
@@ -62,38 +64,47 @@ var Run = function(Litbx, Core) {
 		switch(direction) {
 
 			case '>':
-				if ( this.isEnd() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = 0;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isEnd() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isEnd() ) {
+
+					Litbx.current = 0;
 
 				} else {
+
 					Litbx.current = index + 1;
+
 				}
 				break;
 
 			case '<':
-				if ( this.isStart() ) {
 
-					// do this smarter (if in if)
-					if ( Litbx.options.loop) {
-						Litbx.current = Litbx.groupLength - 1;
-					} else {
-						Litbx.current = index;
-					}
+				if ( this.isStart() && !Litbx.options.loop ) {
+
+					//Litbx.current = index;
+					return false; // stop here
+
+				} else if ( this.isStart() ) {
+
+					Litbx.current = Litbx.groupLength - 1;
+
 
 				} else {
+
 					Litbx.current = index - 1;
+
 				}
 				break;
 
 			case '=':
+
 				Litbx.current = index;
 				break;
+
 		}
 
 	/*
@@ -107,6 +118,8 @@ var Run = function(Litbx, Core) {
 		//Core.Images.calculate();
 
 		Core.Images.load();
+
+		Core.Title.build();
 
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );

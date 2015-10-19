@@ -22,18 +22,39 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.current = function( shift ) {
 
+		// not in use yet
+		if ( typeof shift !== 'undefined' ) {
+
+			// Extract move direction
+			this.direction = shift.substr(0, 1);
+			// Extract move steps - default: 1
+			this.steps = ( shift.substr(1) ) ? shift.substr(1) : 1;
+
+		}
+
 		switch( shift ) {
 			case '++':
-				return Litbx.elements.eq( Litbx.current + 1 );
+				if ( Core.Run.isEnd() ) {
+					return Litbx.elements.eq( 0 );
+				} else {
+					return Litbx.elements.eq( Litbx.current + 1 );
+				}
+			break;
 
 			case '--':
-				return Litbx.elements.eq( Litbx.current - 1 );
+				if ( Core.Run.isStart() ) {
+					return Litbx.elements.eq( Litbx.groupLength - 1 );
+				} else {
+					return Litbx.elements.eq( Litbx.current - 1 );
+				}
+			break;
 
 			default:
 				return Litbx.elements.eq( Litbx.current );
 		}
 
 	};
+
 
 	/**
 	 * Add proper unit to value
@@ -71,6 +92,64 @@ var Helper = function(Litbx, Core) {
 	 */
 	Module.prototype.now = Date.now || function() {
 		return new Date().getTime();
+	};
+
+
+	/**
+	 * Scroll Lock
+	 *
+	 * Improve code by this snippet: https://gist.github.com/barneycarroll/6550066
+	 */
+
+	// Lock scroll
+	Module.prototype.lockScroll = function() {
+
+		this.$html = $( 'html' );
+
+		// Store current scroll position
+		this.prevScroll = $( window ).scrollTop();
+
+		// Store current css properties
+		/*
+		this.prevStyles = {
+			'position': this.$html.css('position'),
+			'overflowy': this.$html.css('overflow-y')
+		};
+		*/
+
+		// Prevent scroll by css
+		$( this.$html )
+			.addClass( Litbx.options.classes.locked )
+			.css({
+				'top': - this.prevScroll + 'px',
+				'position': 'fixed',
+				'overflow-y': 'scroll'
+			});
+
+		Litbx.locked = true;
+	};
+
+	// Unlock scroll
+	Module.prototype.unlockScroll = function() {
+
+		if ( Litbx.locked ) {
+
+			// Reset all properties
+			$( this.$html )
+				.removeClass( Litbx.options.classes.locked )
+				.css({
+					//'position': this.prevStyles.position,
+					//'overflow-y': this.prevStyles.overflowy,
+					'position': '',
+					'overflow-y': '',
+					'top': ''
+				});
+
+			$( window ).scrollTop( this.prevScroll );
+
+			Litbx.locked = false;
+
+		}
 	};
 
 
