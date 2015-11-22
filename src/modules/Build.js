@@ -50,11 +50,6 @@ var Build = function(Litbx, Core) {
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
 
-		// Build markup for title
-		if ( Litbx.options.title ) {
-			this.$title = $( Litbx.options.tpl.title ).appendTo( this.$wrap );
-		}
-
 		//console.log( $outer );
 
 			/*
@@ -71,6 +66,8 @@ var Build = function(Litbx, Core) {
 		//$( '.' + Litbx.options.classes.inner ).append('<img src="" alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
 
 		//$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
+
+		Core.Title.build( this.$wrap, this.$inner );
 
 		// add loading state
 		//Core.Images.loading();

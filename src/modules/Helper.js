@@ -104,18 +104,18 @@ var Helper = function(Litbx, Core) {
 	// Lock scroll
 	Module.prototype.lockScroll = function() {
 
+		// Little more complex
 		this.$html = $( 'html' );
 
 		// Store current scroll position
 		this.prevScroll = $( window ).scrollTop();
-
-		// Store current css properties
-		/*
-		this.prevStyles = {
-			'position': this.$html.css('position'),
-			'overflowy': this.$html.css('overflow-y')
-		};
-		*/
+			// Store current css properties
+			/*
+			this.prevStyles = {
+				'position': this.$html.css('position'),
+				'overflowy': this.$html.css('overflow-y')
+			};
+			*/
 
 		// Prevent scroll by css
 		$( this.$html )
@@ -124,7 +124,7 @@ var Helper = function(Litbx, Core) {
 				'top': - this.prevScroll + 'px',
 				'position': 'fixed',
 				'overflow-y': 'scroll'
-			});
+		});
 
 		Litbx.locked = true;
 	};

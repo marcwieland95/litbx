@@ -56,15 +56,15 @@ var Litbx = function ( elements, options, trigger ) {
 			arrowNext: 'litbx__arrow--next',
 			arrowPrev: 'litbx__arrow--prev',
 			close: 'litbx__close',
-			current: 'current',
-			loading: 'loading',
-			locked: 'locked',
+			current: 'litbx--current',
+			loading: 'litbx--loading',
+			locked: 'litbx--locked',
 			title: 'litbx__title',
 		},
 
 		// Title
 		title: true,
-		titlePosition: 'inside', // inside, outside -> not implemented
+		titlePosition: 'inside', // inside or outside
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -110,6 +110,9 @@ var Litbx = function ( elements, options, trigger ) {
 	// Call before init callback
 	this.options.beforeInit();
 
+
+
+
 	/**
 	 * Construct Core with modules
 	 * @type {Core}
@@ -119,9 +122,9 @@ var Litbx = function ( elements, options, trigger ) {
 		Images: Images,
 		Run: Run,
 		Animation: Animation,
+		Title: Title,
 		Build: Build,
 		Arrows: Arrows,
-		Title: Title,
 		Events: Events,
 		Touch: Touch,
 		Api: Api

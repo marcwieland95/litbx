@@ -182,11 +182,6 @@ var Build = function(Litbx, Core) {
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
 
-		// Build markup for title
-		if ( Litbx.options.title ) {
-			this.$title = $( Litbx.options.tpl.title ).appendTo( this.$wrap );
-		}
-
 		//console.log( $outer );
 
 			/*
@@ -203,6 +198,8 @@ var Build = function(Litbx, Core) {
 		//$( '.' + Litbx.options.classes.inner ).append('<img src="" alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
 
 		//$( '.' + Litbx.options.classes.inner ).append('<img src=" ' + href + ' " alt="">' ).find('img:last').addClass( Litbx.options.classes.item );
+
+		Core.Title.build( this.$wrap, this.$inner );
 
 		// add loading state
 		//Core.Images.loading();
@@ -443,6 +440,7 @@ var Events = function(Litbx, Core) {
 	Module.prototype.resize = function() {
 
 		$(window).on('resize.litbx', this.throttle( function() {
+			Core.Title.calcTitle();
 			Core.Images.calculate();
 		}, Litbx.options.throttle) );
 
@@ -597,18 +595,18 @@ var Helper = function(Litbx, Core) {
 	// Lock scroll
 	Module.prototype.lockScroll = function() {
 
+		// Little more complex
 		this.$html = $( 'html' );
 
 		// Store current scroll position
 		this.prevScroll = $( window ).scrollTop();
-
-		// Store current css properties
-		/*
-		this.prevStyles = {
-			'position': this.$html.css('position'),
-			'overflowy': this.$html.css('overflow-y')
-		};
-		*/
+			// Store current css properties
+			/*
+			this.prevStyles = {
+				'position': this.$html.css('position'),
+				'overflowy': this.$html.css('overflow-y')
+			};
+			*/
 
 		// Prevent scroll by css
 		$( this.$html )
@@ -617,7 +615,7 @@ var Helper = function(Litbx, Core) {
 				'top': - this.prevScroll + 'px',
 				'position': 'fixed',
 				'overflow-y': 'scroll'
-			});
+		});
 
 		Litbx.locked = true;
 	};
@@ -785,9 +783,8 @@ var Images = function(Litbx, Core) {
 
 			//width = if ( width != null )
 
-			maxViewHeight = Math.min( maxHeight,  maxViewHeight );
+			maxViewHeight = Math.min( maxHeight,  maxViewHeight ) - Core.Title.titleHeight;
 			maxViewWidth = Math.min( maxWidth,  maxViewWidth );
-
 
 			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
@@ -880,6 +877,15 @@ var Images = function(Litbx, Core) {
 
 				$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
+
+				// Special handle for title
+				if ( direction === 'bottom' && Litbx.options.titlePosition === 'inside' ) {
+					$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] + Core.Title.titleHeight ) );
+				}
+
+				if ( direction === 'bottom' && Litbx.options.titlePosition === 'outside' ) {
+					$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] + Core.Title.titleHeight ) );
+				}
 
 			});
 
@@ -1013,11 +1019,11 @@ var Run = function(Litbx, Core) {
 		}
 	*/
 
+		//Core.Title.build();
+		Core.Title.build( Core.Build.$wrap, Core.Build.$inner );
+
 		//Core.Images.calculate();
-
 		Core.Images.load();
-
-		Core.Title.build();
 
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
@@ -1055,57 +1061,93 @@ var Title = function(Litbx, Core) {
 	 * Image Module Constructor
 	 */
 	function Module() {
-		this.build();
+
 	}
 
 
 	/**
 	 * Build title
 	 */
-	Module.prototype.build = function() {
+	Module.prototype.build = function( $wrap, $inner) {
 
-		if ( Litbx.options.title ) {
+		// Destroy title
+		this.destroy();
 
-			// Grab title from attr
-			var currentTitle = Core.Helper.current().attr('title');
+		// Grab title from attr
+		this.currentTitle = Core.Helper.current().attr('title');
 
-			// Remove title when not set
-			if ( typeof currentTitle === 'undefined' ) {
+		if ( Litbx.options.title && typeof this.currentTitle !== 'undefined' ) {
 
-				currentTitle = '';
+			// Add some dynamic styles - this is ugly (maybe helpful for some user)
+			if ( Litbx.options.helperStyle ) {
+
+				/*
+				Core.Build.$title.css({
+					'margin-right': Litbx.options.padding[1],
+					'margin-left': Litbx.options.padding[3],
+					//'line-height': Litbx.options.padding[0] + 'px'
+				});
+				*/
+
+			}
+
+			// Build markup for title
+			if ( Litbx.options.title && Litbx.options.titlePosition === 'outside' ) {
+
+				this.$title = $( Litbx.options.tpl.title ).appendTo( $wrap );
+
+			} else { // Litbx.options.titlePosition === 'inside'
+
+				this.$title = $( Litbx.options.tpl.title ).appendTo( $inner );
+
+				// Add additional markup
+				$inner.addClass( 'litbx__inner--' + Litbx.options.titlePosition );
 
 			}
 
 			// Add content and class to title
-			Core.Build.$title
-				.html( currentTitle )
+			this.$title
+				.html( this.currentTitle )
 				.addClass( Litbx.options.titlePosition );
 
-			// Add some dynamic styles
-			if ( Litbx.options.helperStyle ) {
-
-				Core.Build.$title.css({
-					'margin-right': Litbx.options.padding[1],
-					'margin-left': Litbx.options.padding[3],
-					'line-height': Litbx.options.padding[0] + 'px'
-				});
-
-			}
+			this.calcTitle();
 
 		}
+
+	};
+
+
+	/**
+	 * Calc title height
+	 */
+	Module.prototype.calcTitle = function() {
+
+		// Store height
+		this.titleHeight = this.$title.outerHeight();
+		//this.titleHeight = $( '.' + Litbx.options.classes.title ).outerHeight();
+
+	};
+
+
+	/**
+	 * Destroy title
+	 */
+	Module.prototype.destroy = function() {
 
 		/*
-		// Measure title height and add margin bottom - just on first run
-		//if ( !Litbx.builded && Litbx.options.titlePosition === 'outside' ) {
-		if ( Litbx.options.titlePosition === 'outside' ) {
+		if (typeof this.$title != 'undefined') {
 
-			var title_height = $( '.' + Litbx.options.classes.title ).height();
-			//Litbx.options.margin[2] += title_height;
-			//console.log( title_height );
+			this.$title.remove();
 
-			//$( '.' + Litbx.options.classes.wrapper ).css( 'margin-bottom', title_height + 'px' )
 		}
 		*/
+
+		// normalize value
+		this.titleHeight = 0;
+		this.currentTitle = '';
+
+		// remove title element
+		$( '.' + Litbx.options.classes.title ).remove();
 
 	};
 
@@ -1190,15 +1232,15 @@ var Litbx = function ( elements, options, trigger ) {
 			arrowNext: 'litbx__arrow--next',
 			arrowPrev: 'litbx__arrow--prev',
 			close: 'litbx__close',
-			current: 'current',
-			loading: 'loading',
-			locked: 'locked',
+			current: 'litbx--current',
+			loading: 'litbx--loading',
+			locked: 'litbx--locked',
 			title: 'litbx__title',
 		},
 
 		// Title
 		title: true,
-		titlePosition: 'inside', // inside, outside -> not implemented
+		titlePosition: 'inside', // inside or outside
 
 		// Templates - can't use classes dynamicly here and there is also redundancy
 		tpl: {
@@ -1244,6 +1286,9 @@ var Litbx = function ( elements, options, trigger ) {
 	// Call before init callback
 	this.options.beforeInit();
 
+
+
+
 	/**
 	 * Construct Core with modules
 	 * @type {Core}
@@ -1253,9 +1298,9 @@ var Litbx = function ( elements, options, trigger ) {
 		Images: Images,
 		Run: Run,
 		Animation: Animation,
+		Title: Title,
 		Build: Build,
 		Arrows: Arrows,
-		Title: Title,
 		Events: Events,
 		Touch: Touch,
 		Api: Api

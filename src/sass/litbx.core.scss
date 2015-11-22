@@ -41,6 +41,10 @@ $white: rgb(255, 255, 255) !default;
 			width: 100%;
 			height: 100%;
 		}
+
+		&--inside {
+			position: relative;
+		}
 	}
 
 	&__item {
@@ -102,7 +106,6 @@ $white: rgb(255, 255, 255) !default;
 	}
 
 
-
 	/*
 		Title
 	 */
@@ -113,16 +116,18 @@ $white: rgb(255, 255, 255) !default;
 		left: 0;
 		right: 0;
 		//height: 50px;
+		z-index: 1; // above right/left arrow
+		padding-top: 15px;
+		transform: translateY(100%);
 
 		&.inside {
 			//background-color: #fff;
 		}
 
 		&.outside {
-			transform: translateY(100%);
+			// transform: translateY(100%);
 		}
 	}
-
 
 
 	/*

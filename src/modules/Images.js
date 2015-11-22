@@ -132,9 +132,8 @@ var Images = function(Litbx, Core) {
 
 			//width = if ( width != null )
 
-			maxViewHeight = Math.min( maxHeight,  maxViewHeight );
+			maxViewHeight = Math.min( maxHeight,  maxViewHeight ) - Core.Title.titleHeight;
 			maxViewWidth = Math.min( maxWidth,  maxViewWidth );
-
 
 			// set flag for width - not in use
 			//if ( (margin + padding + width) < Litbx.browserWidth ) {
@@ -227,6 +226,15 @@ var Images = function(Litbx, Core) {
 
 				$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] ) );
 				$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] ) );
+
+				// Special handle for title
+				if ( direction === 'bottom' && Litbx.options.titlePosition === 'inside' ) {
+					$wrapper.css( 'padding-' + direction, Core.Helper.getValue( padding[ i ] + Core.Title.titleHeight ) );
+				}
+
+				if ( direction === 'bottom' && Litbx.options.titlePosition === 'outside' ) {
+					$wrapper.css( 'margin-' + direction, Core.Helper.getValue( margin[ i ] + Core.Title.titleHeight ) );
+				}
 
 			});
 

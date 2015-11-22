@@ -178,6 +178,7 @@ var Events = function(Litbx, Core) {
 	Module.prototype.resize = function() {
 
 		$(window).on('resize.litbx', this.throttle( function() {
+			Core.Title.calcTitle();
 			Core.Images.calculate();
 		}, Litbx.options.throttle) );
 

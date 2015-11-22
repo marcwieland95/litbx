@@ -115,11 +115,11 @@ var Run = function(Litbx, Core) {
 		}
 	*/
 
+		//Core.Title.build();
+		Core.Title.build( Core.Build.$wrap, Core.Build.$inner );
+
 		//Core.Images.calculate();
-
 		Core.Images.load();
-
-		Core.Title.build();
 
 		// nextImage
 		//preloadMedia = Litbx.group.eq( Litbx.current.index() ).addClass( Litbx.options.classes.current );
