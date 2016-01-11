@@ -12,6 +12,7 @@ In progress
 - Improve margin/padding handling
 - Rewritte title functions
 - Don't hardcode arrow and close sizes inside css (height and width)
+- Responsive: Populate changes on the fly (e.g arrow) -> Owl.Carousel = this.trigger('change', { property: { name: 'settings', value: settings } });
 
 ##Building
 Build using Grunt and Bower. The following tasks are available:

@@ -45,6 +45,12 @@ var Litbx = function ( elements, options, trigger ) {
 		prevKey: [37],
 		throttle: 16,
 
+		// Responsive
+		responsive: {},
+		responsiveBaseElement: window,
+		responsiveRefreshRate: 200,
+		responsiveClass: false,
+
 		// Classes
 		classes: {
 			//base: 'litbx', // not in use
@@ -60,6 +66,7 @@ var Litbx = function ( elements, options, trigger ) {
 			loading: 'litbx--loading',
 			locked: 'litbx--locked',
 			title: 'litbx__title',
+			responsive: 'litbx__responsive',
 		},
 
 		// Title
@@ -111,14 +118,13 @@ var Litbx = function ( elements, options, trigger ) {
 	this.options.beforeInit();
 
 
-
-
 	/**
 	 * Construct Core with modules
 	 * @type {Core}
 	 */
 	var Engine = new Core(this, {
 		Helper: Helper,
+		Responsive: Responsive,
 		Images: Images,
 		Run: Run,
 		Animation: Animation,

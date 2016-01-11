@@ -166,7 +166,7 @@ var Events = function(Litbx, Core) {
 			.off('click.litbx touchstart.litbx');
 
 		$(window)
-			.off('keyup.litbx');
+			.off('keyup.litbx resize.litbx');
 
 	};
 
@@ -177,10 +177,29 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.resize = function() {
 
+		// Run multiple functions on resize
 		$(window).on('resize.litbx', this.throttle( function() {
+
 			Core.Title.calcTitle();
 			Core.Images.calculate();
+
 		}, Litbx.options.throttle) );
+
+		// Update responsive settings at a different speed
+		$(window).on('resize.litbx', this.throttle( function() {
+
+			Core.Responsive.setup();
+
+			// Replace responsive class
+			if ( Litbx.options.responsiveClass ) {
+
+				Litbx.$wrapper.attr('class',
+					Litbx.$wrapper.attr('class').replace(new RegExp('(' + Litbx.options.classes.responsive + '-)[0-9]+', 'g'), '$1' + Litbx.currentMatch)
+				);
+
+			}
+
+		}, Litbx.options.responsiveRefreshRate) );
 
 	};
 

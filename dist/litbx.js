@@ -155,9 +155,15 @@ var Build = function(Litbx, Core) {
 	 */
 	Module.prototype.init = function () {
 
+		// Set flag to see if lightbox is open
+		Litbx.open = true;
+
 		var href,
 		$overlay;
 		//$wrap;
+
+		// Setup responsive settings
+		Core.Responsive.setup();
 
 		//console.log( Litbx.element.attr( 'class' ) );
 		//console.log( Litbx.element );
@@ -181,6 +187,9 @@ var Build = function(Litbx, Core) {
 		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
+
+		Litbx.$wrapper = this.$wrap;
+		Core.Responsive.responsiveClass();
 
 		//console.log( $outer );
 
@@ -226,6 +235,9 @@ var Build = function(Litbx, Core) {
 		// Remove classes
 		Core.Helper.current()
 			.removeClass( Litbx.options.classes.current );
+
+		// Set flag to see if lightbox is open
+		Litbx.open = false;
 
 	};
 
@@ -428,7 +440,7 @@ var Events = function(Litbx, Core) {
 			.off('click.litbx touchstart.litbx');
 
 		$(window)
-			.off('keyup.litbx');
+			.off('keyup.litbx resize.litbx');
 
 	};
 
@@ -439,10 +451,29 @@ var Events = function(Litbx, Core) {
 	 */
 	Module.prototype.resize = function() {
 
+		// Run multiple functions on resize
 		$(window).on('resize.litbx', this.throttle( function() {
+
 			Core.Title.calcTitle();
 			Core.Images.calculate();
+
 		}, Litbx.options.throttle) );
+
+		// Update responsive settings at a different speed
+		$(window).on('resize.litbx', this.throttle( function() {
+
+			Core.Responsive.setup();
+
+			// Replace responsive class
+			if ( Litbx.options.responsiveClass ) {
+
+				Litbx.$wrapper.attr('class',
+					Litbx.$wrapper.attr('class').replace(new RegExp('(' + Litbx.options.classes.responsive + '-)[0-9]+', 'g'), '$1' + Litbx.currentMatch)
+				);
+
+			}
+
+		}, Litbx.options.responsiveRefreshRate) );
 
 	};
 
@@ -904,6 +935,88 @@ var Images = function(Litbx, Core) {
 
 };;/**
  * --------------------------------
+ * Litbx Responsive
+ * --------------------------------
+ * Responsive handling
+ * @return {Litbx.Responsive}
+ *
+ * ToDo: Populate changes on the fly
+ */
+
+var Responsive = function(Litbx, Core) {
+
+	/**
+	 * Responsive Module Constructor
+	 */
+	function Module() {
+
+	}
+
+
+	/**
+	 * Handle viewport
+	 */
+	Module.prototype.getViewport = function() {
+		var width;
+		if ( Litbx.options.responsiveBaseElement !== window ) {
+			width = $( Litbx.options.responsiveBaseElement ).width();
+		} else if ( window.innerWidth ) {
+			width = window.innerWidth;
+		} else if ( document.documentElement && document.documentElement.clientWidth ) {
+			width = document.documentElement.clientWidth;
+		} else {
+			throw 'Can not detect viewport width.';
+		}
+		return width;
+	};
+
+
+	/**
+	 * Override options on specific viewport size
+	 */
+	Module.prototype.setup = function() {
+
+		var viewport = this.getViewport(),
+		overwrites = Litbx.options.responsive,
+		match = 0;
+
+		// Override settings when match
+		if ( overwrites ) {
+
+			$.each(overwrites, function(breakpoint) {
+				if (breakpoint <= viewport && breakpoint > match) {
+					match = Number(breakpoint);
+				}
+			});
+
+			Litbx.options = $.extend({}, Litbx.options, overwrites[match]);
+			Litbx.currentMatch = match;
+
+		}
+
+
+	};
+
+
+	/**
+	 * Add responsive class to wrapper
+	 */
+	Module.prototype.responsiveClass = function() {
+
+		// Responsive class
+		if ( Litbx.options.responsiveClass ) {
+
+			Litbx.$wrapper.addClass( Litbx.options.classes.responsive + '-' + Litbx.currentMatch );
+
+		}
+
+	};
+
+	// @return Module
+	return new Module();
+
+};;/**
+ * --------------------------------
  * Litbx Run
  * --------------------------------
  * Run logic module
@@ -1221,6 +1334,12 @@ var Litbx = function ( elements, options, trigger ) {
 		prevKey: [37],
 		throttle: 16,
 
+		// Responsive
+		responsive: {},
+		responsiveBaseElement: window,
+		responsiveRefreshRate: 200,
+		responsiveClass: false,
+
 		// Classes
 		classes: {
 			//base: 'litbx', // not in use
@@ -1236,6 +1355,7 @@ var Litbx = function ( elements, options, trigger ) {
 			loading: 'litbx--loading',
 			locked: 'litbx--locked',
 			title: 'litbx__title',
+			responsive: 'litbx__responsive',
 		},
 
 		// Title
@@ -1287,14 +1407,13 @@ var Litbx = function ( elements, options, trigger ) {
 	this.options.beforeInit();
 
 
-
-
 	/**
 	 * Construct Core with modules
 	 * @type {Core}
 	 */
 	var Engine = new Core(this, {
 		Helper: Helper,
+		Responsive: Responsive,
 		Images: Images,
 		Run: Run,
 		Animation: Animation,

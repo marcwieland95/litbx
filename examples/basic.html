@@ -52,7 +52,13 @@
 		<script src="../dist/litbx.js"></script>
 		<script>
 			$(document).ready(function() {
-				$(".litbx").litbx();
+				$(".litbx").litbx({
+					responsive: {
+						650: {
+							'arrows': false
+						}
+					}
+				});
 			});
 		</script>
 

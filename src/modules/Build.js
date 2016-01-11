@@ -23,9 +23,15 @@ var Build = function(Litbx, Core) {
 	 */
 	Module.prototype.init = function () {
 
+		// Set flag to see if lightbox is open
+		Litbx.open = true;
+
 		var href,
 		$overlay;
 		//$wrap;
+
+		// Setup responsive settings
+		Core.Responsive.setup();
 
 		//console.log( Litbx.element.attr( 'class' ) );
 		//console.log( Litbx.element );
@@ -49,6 +55,9 @@ var Build = function(Litbx, Core) {
 		$overlay = $( Litbx.options.tpl.overlay ).appendTo( 'body' );
 		this.$wrap = $( Litbx.options.tpl.wrap ).appendTo( $overlay );
 		this.$inner = $( Litbx.options.tpl.inner ).appendTo( this.$wrap );
+
+		Litbx.$wrapper = this.$wrap;
+		Core.Responsive.responsiveClass();
 
 		//console.log( $outer );
 
@@ -94,6 +103,9 @@ var Build = function(Litbx, Core) {
 		// Remove classes
 		Core.Helper.current()
 			.removeClass( Litbx.options.classes.current );
+
+		// Set flag to see if lightbox is open
+		Litbx.open = false;
 
 	};
 
