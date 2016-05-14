@@ -242,7 +242,7 @@ var Events = function(Litbx, Core) {
 	};
 
 
-	// @return Module
+	// Return Module
 	return new Module();
 
 };

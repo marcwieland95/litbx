@@ -13,7 +13,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Responsive Module Constructor
 	 */
-	function Module() {
+	function Responsive() {
 
 	}
 
@@ -21,7 +21,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Handle viewport
 	 */
-	Module.prototype.getViewport = function() {
+	Responsive.prototype.getViewport = function() {
 		var width;
 		if ( Litbx.options.responsiveBaseElement !== window ) {
 			width = $( Litbx.options.responsiveBaseElement ).width();
@@ -39,7 +39,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Override options on specific viewport size
 	 */
-	Module.prototype.setup = function() {
+	Responsive.prototype.setup = function() {
 
 		var viewport = this.getViewport(),
 		overwrites = Litbx.options.responsive,
@@ -66,7 +66,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Add responsive class to wrapper
 	 */
-	Module.prototype.responsiveClass = function() {
+	Responsive.prototype.responsiveClass = function() {
 
 		// Responsive class
 		if ( Litbx.options.responsiveClass ) {
@@ -77,7 +77,7 @@ var Responsive = function(Litbx, Core) {
 
 	};
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Responsive();
 
 };

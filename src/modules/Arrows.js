@@ -3,7 +3,7 @@
  * Litbx Arrows
  * --------------------------------
  * Arrows navigation module
- * @return {Litbx.Arrows}
+ * @return {Arrows}
  */
 
 var Arrows = function(Litbx, Core) {
@@ -12,7 +12,7 @@ var Arrows = function(Litbx, Core) {
 	/**
 	 * Arrows Module Constructor
 	 */
-	function Module() {
+	function Arrows() {
 		this.build();
 		this.collect();
 	}
@@ -21,7 +21,7 @@ var Arrows = function(Litbx, Core) {
 	 * Build
 	 * arrows DOM
 	 */
-	Module.prototype.build = function() {
+	Arrows.prototype.build = function() {
 
 		// Close
 		if ( Litbx.options.closeBtn ) {
@@ -55,7 +55,7 @@ var Arrows = function(Litbx, Core) {
 	 * Collect arrow item
 	 * arrows DOM
 	 */
-	Module.prototype.collect = function() {
+	Arrows.prototype.collect = function() {
 
 		this.arrows = $( '.' + Litbx.options.classes.overlay ).find( '.' + Litbx.options.classes.arrow );
 
@@ -63,7 +63,7 @@ var Arrows = function(Litbx, Core) {
 
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Arrows();
 
 };

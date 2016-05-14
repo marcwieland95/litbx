@@ -5,14 +5,16 @@
  * Build slider DOM
  * @param {Litbx} Litbx
  * @param {Core} Core
- * @return {Module}
+ * @return {Litbx.Build}
  */
 
 var Build = function(Litbx, Core) {
 
 
-	// Build Module Constructor
-	function Module() {
+	/**
+	 * Build Module Constructor
+	 */
+	function Build() {
 		this.init();
 	}
 
@@ -21,7 +23,7 @@ var Build = function(Litbx, Core) {
 	 * Init lightbox
 	 * @param
 	 */
-	Module.prototype.init = function () {
+	Build.prototype.init = function () {
 
 		// Set flag to see if lightbox is open
 		Litbx.open = true;
@@ -90,7 +92,7 @@ var Build = function(Litbx, Core) {
 	 * Destroy lightbox
 	 * @param
 	 */
-	Module.prototype.destroy = function () {
+	Build.prototype.destroy = function () {
 
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
@@ -109,7 +111,7 @@ var Build = function(Litbx, Core) {
 
 	};
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Build();
 
 };

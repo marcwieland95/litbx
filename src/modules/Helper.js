@@ -12,7 +12,7 @@ var Helper = function(Litbx, Core) {
 	/**
 	 * Helper Module Constructor
 	 */
-	function Module() {}
+	function Helper() {}
 
 
 	/**
@@ -20,7 +20,7 @@ var Helper = function(Litbx, Core) {
 	 * @param shift
 	 * @return {jquery object}
 	 */
-	Module.prototype.current = function( shift ) {
+	Helper.prototype.current = function( shift ) {
 
 		// not in use yet
 		if ( typeof shift !== 'undefined' ) {
@@ -61,7 +61,7 @@ var Helper = function(Litbx, Core) {
 	 * @param value
 	 * @return {sting}
 	 */
-	Module.prototype.getValue = function( value ) {
+	Helper.prototype.getValue = function( value ) {
 		return value + 'px';
 	};
 
@@ -90,7 +90,7 @@ var Helper = function(Litbx, Core) {
 	 * Get time
 	 * @source http://underscorejs.org/
 	 */
-	Module.prototype.now = Date.now || function() {
+	Helper.prototype.now = Date.now || function() {
 		return new Date().getTime();
 	};
 
@@ -102,7 +102,7 @@ var Helper = function(Litbx, Core) {
 	 */
 
 	// Lock scroll
-	Module.prototype.lockScroll = function() {
+	Helper.prototype.lockScroll = function() {
 
 		// Little more complex
 		this.$html = $( 'html' );
@@ -130,7 +130,7 @@ var Helper = function(Litbx, Core) {
 	};
 
 	// Unlock scroll
-	Module.prototype.unlockScroll = function() {
+	Helper.prototype.unlockScroll = function() {
 
 		if ( Litbx.locked ) {
 
@@ -153,8 +153,8 @@ var Helper = function(Litbx, Core) {
 	};
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Helper();
 
 
 };

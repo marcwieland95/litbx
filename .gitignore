@@ -2,6 +2,7 @@
 node_modules/
 bower_components/
 assets/
+examples/local.html
 *.scssc
 .sass-cache/
 *.sublime-workspace

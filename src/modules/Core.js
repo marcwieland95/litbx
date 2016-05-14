@@ -2,9 +2,9 @@
  * --------------------------------
  * Litbx Core
  * --------------------------------
- * @param {Litbx} Litbx		Slider Class
- * @param {array} Modules	Modules list to construct
- * @return {Module}
+ * @param {Object} Litbx		Slider Class
+ * @param {Object} Modules	Modules list to construct
+ * @return {Core}
  */
 
 var Core = function (Litbx, Modules) {
@@ -13,7 +13,7 @@ var Core = function (Litbx, Modules) {
 	 * Core Module Constructor
 	 * Construct modules and inject Litbx and Core as dependency
 	 */
-	function Module() {
+	function Core() {
 
 		for(var module in Modules) {
 			this[module] = new Modules[module](Litbx, this);
@@ -21,7 +21,7 @@ var Core = function (Litbx, Modules) {
 
 	}
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Core();
 
 };

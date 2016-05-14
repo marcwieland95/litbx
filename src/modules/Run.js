@@ -10,10 +10,9 @@ var Run = function(Litbx, Core) {
 
 
 	/**
-	 * Run Module
-	 * Constructor
+	 * Run Module Constructor
 	 */
-	function Module() {
+	function Run() {
 
 	}
 
@@ -21,7 +20,7 @@ var Run = function(Litbx, Core) {
 	 * Check if we are on first slide
 	 * @return {boolean}
 	 */
-	Module.prototype.isStart = function() {
+	Run.prototype.isStart = function() {
 		return Litbx.current === 0;
 	};
 
@@ -30,7 +29,7 @@ var Run = function(Litbx, Core) {
 	 * Check if we are on last slide
 	 * @return {boolean}
 	 */
-	Module.prototype.isEnd = function() {
+	Run.prototype.isEnd = function() {
 		return Litbx.current === Litbx.groupLength - 1;
 	};
 
@@ -40,7 +39,7 @@ var Run = function(Litbx, Core) {
 	 * @param direction
 	 * @param index
 	 */
-	Module.prototype.switch = function ( direction, index ) {
+	Run.prototype.switch = function ( direction, index ) {
 
 		var preloadMedia,
 		preloadMediaURL,
@@ -140,6 +139,7 @@ var Run = function(Litbx, Core) {
 
 	};
 
-	return new Module();
+	// Return Module
+	return new Run();
 
 };

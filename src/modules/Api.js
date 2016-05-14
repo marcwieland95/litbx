@@ -12,14 +12,14 @@ var Api = function(Litbx, Core) {
 	/**
 	 * Api Module Constructor
 	 */
-	function Module() {}
+	function Api() {}
 
 
 	/**
 	 * Api instance
 	 * @return {object}
 	 */
-	Module.prototype.instance = function() {
+	Api.prototype.instance = function() {
 
 		return {
 
@@ -29,8 +29,8 @@ var Api = function(Litbx, Core) {
 	};
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Api();
 
 
 };

@@ -8,10 +8,13 @@
 
 var Animation = function(Litbx, Core) {
 
-	function Module() {}
+	/**
+	 * Animation Module Constructor
+	 */
+	function Animation() {}
 
 
-
-	return new Module();
+	// Return Module
+	return new Animation();
 
 };

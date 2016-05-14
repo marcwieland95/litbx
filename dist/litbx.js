@@ -18,11 +18,14 @@
 
 var Animation = function(Litbx, Core) {
 
-	function Module() {}
+	/**
+	 * Animation Module Constructor
+	 */
+	function Animation() {}
 
 
-
-	return new Module();
+	// Return Module
+	return new Animation();
 
 };
 ;/**
@@ -39,14 +42,14 @@ var Api = function(Litbx, Core) {
 	/**
 	 * Api Module Constructor
 	 */
-	function Module() {}
+	function Api() {}
 
 
 	/**
 	 * Api instance
 	 * @return {object}
 	 */
-	Module.prototype.instance = function() {
+	Api.prototype.instance = function() {
 
 		return {
 
@@ -56,8 +59,8 @@ var Api = function(Litbx, Core) {
 	};
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Api();
 
 
 };
@@ -66,7 +69,7 @@ var Api = function(Litbx, Core) {
  * Litbx Arrows
  * --------------------------------
  * Arrows navigation module
- * @return {Litbx.Arrows}
+ * @return {Arrows}
  */
 
 var Arrows = function(Litbx, Core) {
@@ -75,7 +78,7 @@ var Arrows = function(Litbx, Core) {
 	/**
 	 * Arrows Module Constructor
 	 */
-	function Module() {
+	function Arrows() {
 		this.build();
 		this.collect();
 	}
@@ -84,7 +87,7 @@ var Arrows = function(Litbx, Core) {
 	 * Build
 	 * arrows DOM
 	 */
-	Module.prototype.build = function() {
+	Arrows.prototype.build = function() {
 
 		// Close
 		if ( Litbx.options.closeBtn ) {
@@ -118,7 +121,7 @@ var Arrows = function(Litbx, Core) {
 	 * Collect arrow item
 	 * arrows DOM
 	 */
-	Module.prototype.collect = function() {
+	Arrows.prototype.collect = function() {
 
 		this.arrows = $( '.' + Litbx.options.classes.overlay ).find( '.' + Litbx.options.classes.arrow );
 
@@ -126,8 +129,8 @@ var Arrows = function(Litbx, Core) {
 
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Arrows();
 
 };
 ;/**
@@ -137,14 +140,16 @@ var Arrows = function(Litbx, Core) {
  * Build slider DOM
  * @param {Litbx} Litbx
  * @param {Core} Core
- * @return {Module}
+ * @return {Litbx.Build}
  */
 
 var Build = function(Litbx, Core) {
 
 
-	// Build Module Constructor
-	function Module() {
+	/**
+	 * Build Module Constructor
+	 */
+	function Build() {
 		this.init();
 	}
 
@@ -153,7 +158,7 @@ var Build = function(Litbx, Core) {
 	 * Init lightbox
 	 * @param
 	 */
-	Module.prototype.init = function () {
+	Build.prototype.init = function () {
 
 		// Set flag to see if lightbox is open
 		Litbx.open = true;
@@ -222,7 +227,7 @@ var Build = function(Litbx, Core) {
 	 * Destroy lightbox
 	 * @param
 	 */
-	Module.prototype.destroy = function () {
+	Build.prototype.destroy = function () {
 
 		// Remove wrapper
 		$( '.' + Litbx.options.classes.overlay ).remove();
@@ -241,17 +246,17 @@ var Build = function(Litbx, Core) {
 
 	};
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Build();
 
 };
 ;/**
  * --------------------------------
  * Litbx Core
  * --------------------------------
- * @param {Litbx} Litbx		Slider Class
- * @param {array} Modules	Modules list to construct
- * @return {Module}
+ * @param {Object} Litbx		Slider Class
+ * @param {Object} Modules	Modules list to construct
+ * @return {Core}
  */
 
 var Core = function (Litbx, Modules) {
@@ -260,7 +265,7 @@ var Core = function (Litbx, Modules) {
 	 * Core Module Constructor
 	 * Construct modules and inject Litbx and Core as dependency
 	 */
-	function Module() {
+	function Core() {
 
 		for(var module in Modules) {
 			this[module] = new Modules[module](Litbx, this);
@@ -268,8 +273,8 @@ var Core = function (Litbx, Modules) {
 
 	}
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Core();
 
 };
 ;/**
@@ -516,7 +521,7 @@ var Events = function(Litbx, Core) {
 	};
 
 
-	// @return Module
+	// Return Module
 	return new Module();
 
 };
@@ -534,7 +539,7 @@ var Helper = function(Litbx, Core) {
 	/**
 	 * Helper Module Constructor
 	 */
-	function Module() {}
+	function Helper() {}
 
 
 	/**
@@ -542,7 +547,7 @@ var Helper = function(Litbx, Core) {
 	 * @param shift
 	 * @return {jquery object}
 	 */
-	Module.prototype.current = function( shift ) {
+	Helper.prototype.current = function( shift ) {
 
 		// not in use yet
 		if ( typeof shift !== 'undefined' ) {
@@ -583,7 +588,7 @@ var Helper = function(Litbx, Core) {
 	 * @param value
 	 * @return {sting}
 	 */
-	Module.prototype.getValue = function( value ) {
+	Helper.prototype.getValue = function( value ) {
 		return value + 'px';
 	};
 
@@ -612,7 +617,7 @@ var Helper = function(Litbx, Core) {
 	 * Get time
 	 * @source http://underscorejs.org/
 	 */
-	Module.prototype.now = Date.now || function() {
+	Helper.prototype.now = Date.now || function() {
 		return new Date().getTime();
 	};
 
@@ -624,7 +629,7 @@ var Helper = function(Litbx, Core) {
 	 */
 
 	// Lock scroll
-	Module.prototype.lockScroll = function() {
+	Helper.prototype.lockScroll = function() {
 
 		// Little more complex
 		this.$html = $( 'html' );
@@ -652,7 +657,7 @@ var Helper = function(Litbx, Core) {
 	};
 
 	// Unlock scroll
-	Module.prototype.unlockScroll = function() {
+	Helper.prototype.unlockScroll = function() {
 
 		if ( Litbx.locked ) {
 
@@ -675,8 +680,8 @@ var Helper = function(Litbx, Core) {
 	};
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Helper();
 
 
 };
@@ -693,7 +698,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Image Module Constructor
 	 */
-	function Module() {
+	function Images() {
 
 	}
 
@@ -701,7 +706,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Load image
 	 */
-	Module.prototype.load = function() {
+	Images.prototype.load = function() {
 
 		// Load current image
 		this.currentImage = new Image();
@@ -738,7 +743,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Load images - spinner
 	 */
-	Module.prototype.loading = function() {
+	Images.prototype.loading = function() {
 
 		$( this.currentImage ).on('load', function() {
 
@@ -767,7 +772,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Preload image
 	 */
-	Module.prototype.preload = function() {
+	Images.prototype.preload = function() {
 
 		if ( Litbx.options.preload && Litbx.groupMode !== 'single' ) {
 
@@ -793,7 +798,7 @@ var Images = function(Litbx, Core) {
 	 * Make sure that this function is loaded when image has loaded
 	 *
 	 */
-	Module.prototype.calculate = function() {
+	Images.prototype.calculate = function() {
 
 		// Check if images is loaded
 		if ( this.currentImage.complete ) {
@@ -930,8 +935,8 @@ var Images = function(Litbx, Core) {
 	};
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Images();
 
 };;/**
  * --------------------------------
@@ -948,7 +953,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Responsive Module Constructor
 	 */
-	function Module() {
+	function Responsive() {
 
 	}
 
@@ -956,7 +961,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Handle viewport
 	 */
-	Module.prototype.getViewport = function() {
+	Responsive.prototype.getViewport = function() {
 		var width;
 		if ( Litbx.options.responsiveBaseElement !== window ) {
 			width = $( Litbx.options.responsiveBaseElement ).width();
@@ -974,7 +979,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Override options on specific viewport size
 	 */
-	Module.prototype.setup = function() {
+	Responsive.prototype.setup = function() {
 
 		var viewport = this.getViewport(),
 		overwrites = Litbx.options.responsive,
@@ -1001,7 +1006,7 @@ var Responsive = function(Litbx, Core) {
 	/**
 	 * Add responsive class to wrapper
 	 */
-	Module.prototype.responsiveClass = function() {
+	Responsive.prototype.responsiveClass = function() {
 
 		// Responsive class
 		if ( Litbx.options.responsiveClass ) {
@@ -1012,8 +1017,8 @@ var Responsive = function(Litbx, Core) {
 
 	};
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Responsive();
 
 };;/**
  * --------------------------------
@@ -1027,10 +1032,9 @@ var Run = function(Litbx, Core) {
 
 
 	/**
-	 * Run Module
-	 * Constructor
+	 * Run Module Constructor
 	 */
-	function Module() {
+	function Run() {
 
 	}
 
@@ -1038,7 +1042,7 @@ var Run = function(Litbx, Core) {
 	 * Check if we are on first slide
 	 * @return {boolean}
 	 */
-	Module.prototype.isStart = function() {
+	Run.prototype.isStart = function() {
 		return Litbx.current === 0;
 	};
 
@@ -1047,7 +1051,7 @@ var Run = function(Litbx, Core) {
 	 * Check if we are on last slide
 	 * @return {boolean}
 	 */
-	Module.prototype.isEnd = function() {
+	Run.prototype.isEnd = function() {
 		return Litbx.current === Litbx.groupLength - 1;
 	};
 
@@ -1057,7 +1061,7 @@ var Run = function(Litbx, Core) {
 	 * @param direction
 	 * @param index
 	 */
-	Module.prototype.switch = function ( direction, index ) {
+	Run.prototype.switch = function ( direction, index ) {
 
 		var preloadMedia,
 		preloadMediaURL,
@@ -1157,7 +1161,8 @@ var Run = function(Litbx, Core) {
 
 	};
 
-	return new Module();
+	// Return Module
+	return new Run();
 
 };
 ;/**
@@ -1171,9 +1176,9 @@ var Run = function(Litbx, Core) {
 var Title = function(Litbx, Core) {
 
 	/**
-	 * Image Module Constructor
+	 * Title Module Constructor
 	 */
-	function Module() {
+	function Title() {
 
 	}
 
@@ -1181,7 +1186,7 @@ var Title = function(Litbx, Core) {
 	/**
 	 * Build title
 	 */
-	Module.prototype.build = function( $wrap, $inner) {
+	Title.prototype.build = function( $wrap, $inner) {
 
 		// Destroy title
 		this.destroy();
@@ -1233,7 +1238,7 @@ var Title = function(Litbx, Core) {
 	/**
 	 * Calc title height
 	 */
-	Module.prototype.calcTitle = function() {
+	Title.prototype.calcTitle = function() {
 
 		// Store height
 		this.titleHeight = this.$title.outerHeight();
@@ -1245,7 +1250,7 @@ var Title = function(Litbx, Core) {
 	/**
 	 * Destroy title
 	 */
-	Module.prototype.destroy = function() {
+	Title.prototype.destroy = function() {
 
 		/*
 		if (typeof this.$title != 'undefined') {
@@ -1264,8 +1269,8 @@ var Title = function(Litbx, Core) {
 
 	};
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Title();
 
 };;/**
  * --------------------------------
@@ -1278,13 +1283,13 @@ var Title = function(Litbx, Core) {
 var Touch = function(Litbx, Core) {
 
 	/**
-	 * Helper Module Constructor
+	 * Touch Module Constructor
 	 */
-	function Module() {}
+	function Touch() {}
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Touch();
 
 };
 ;/**

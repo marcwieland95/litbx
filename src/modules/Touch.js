@@ -9,12 +9,12 @@
 var Touch = function(Litbx, Core) {
 
 	/**
-	 * Helper Module Constructor
+	 * Touch Module Constructor
 	 */
-	function Module() {}
+	function Touch() {}
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Touch();
 
 };

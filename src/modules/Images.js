@@ -11,7 +11,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Image Module Constructor
 	 */
-	function Module() {
+	function Images() {
 
 	}
 
@@ -19,7 +19,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Load image
 	 */
-	Module.prototype.load = function() {
+	Images.prototype.load = function() {
 
 		// Load current image
 		this.currentImage = new Image();
@@ -56,7 +56,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Load images - spinner
 	 */
-	Module.prototype.loading = function() {
+	Images.prototype.loading = function() {
 
 		$( this.currentImage ).on('load', function() {
 
@@ -85,7 +85,7 @@ var Images = function(Litbx, Core) {
 	/**
 	 * Preload image
 	 */
-	Module.prototype.preload = function() {
+	Images.prototype.preload = function() {
 
 		if ( Litbx.options.preload && Litbx.groupMode !== 'single' ) {
 
@@ -111,7 +111,7 @@ var Images = function(Litbx, Core) {
 	 * Make sure that this function is loaded when image has loaded
 	 *
 	 */
-	Module.prototype.calculate = function() {
+	Images.prototype.calculate = function() {
 
 		// Check if images is loaded
 		if ( this.currentImage.complete ) {
@@ -248,7 +248,7 @@ var Images = function(Litbx, Core) {
 	};
 
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Images();
 
 };

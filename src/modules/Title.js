@@ -9,9 +9,9 @@
 var Title = function(Litbx, Core) {
 
 	/**
-	 * Image Module Constructor
+	 * Title Module Constructor
 	 */
-	function Module() {
+	function Title() {
 
 	}
 
@@ -19,7 +19,7 @@ var Title = function(Litbx, Core) {
 	/**
 	 * Build title
 	 */
-	Module.prototype.build = function( $wrap, $inner) {
+	Title.prototype.build = function( $wrap, $inner) {
 
 		// Destroy title
 		this.destroy();
@@ -71,7 +71,7 @@ var Title = function(Litbx, Core) {
 	/**
 	 * Calc title height
 	 */
-	Module.prototype.calcTitle = function() {
+	Title.prototype.calcTitle = function() {
 
 		// Store height
 		this.titleHeight = this.$title.outerHeight();
@@ -83,7 +83,7 @@ var Title = function(Litbx, Core) {
 	/**
 	 * Destroy title
 	 */
-	Module.prototype.destroy = function() {
+	Title.prototype.destroy = function() {
 
 		/*
 		if (typeof this.$title != 'undefined') {
@@ -102,7 +102,7 @@ var Title = function(Litbx, Core) {
 
 	};
 
-	// @return Module
-	return new Module();
+	// Return Module
+	return new Title();
 
 };
